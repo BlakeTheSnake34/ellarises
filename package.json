@@ -1,0 +1,28 @@
+{
+  "name": "ellarises",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+"scripts": {
+  "start": "node app.js",
+  "dev": "nodemon app.js"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "connect-flash": "^0.1.1",
+    "csurf": "^1.11.0",
+    "ejs": "^3.1.10",
+    "express": "^5.2.0",
+    "express-session": "^1.18.2",
+    "helmet": "^8.1.0",
+    "knex": "^3.1.0",
+    "multer": "^2.0.2",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
