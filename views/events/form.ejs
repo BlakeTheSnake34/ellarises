@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<%- include('../partials/_nav') %>
+<%- include('../partials/_flash') %>
+
+<h1><%= title %></h1>
+
+<form action="<%= event.id ? '/events/' + event.id : '/events' %>" method="POST">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <label>Name</label><br>
+  <input type="text" name="name" value="<%= event.name || '' %>" required><br><br>
+
+  <label>Date</label><br>
+  <input type="date" name="event_date" value="<%= event.event_date || '' %>"><br><br>
+
+  <label>Type</label><br>
+  <input type="text" name="event_type" value="<%= event.event_type || '' %>"><br><br>
+
+  <label>Description</label><br>
+  <textarea name="description"><%= event.description || '' %></textarea><br><br>
+
+  <button type="submit"><%= event.id ? "Update Event" : "Create Event" %></button>
+</form>
+
+</body>
+</html>

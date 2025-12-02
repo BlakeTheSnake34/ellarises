@@ -15,7 +15,10 @@ const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const participantRoutes = require('./routes/participants');
-// Later you will add: events, surveys, milestones, donations
+const eventRoutes = require('./routes/events');
+const surveyRoutes = require('./routes/surveys');
+const registrationRoutes = require('./routes/registrations'); // new
+// later: milestones, donations
 
 const app = express();
 
@@ -62,6 +65,9 @@ app.use('/', publicRoutes);
 app.use('/', authRoutes);
 app.use('/', dashboardRoutes);
 app.use('/', participantRoutes);
+app.use('/', eventRoutes);
+app.use('/', surveyRoutes);
+app.use('/', registrationRoutes);
 
 // IS 404 Requirement: HTTP 418
 app.get('/teapot', (req, res) => {
@@ -89,3 +95,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Ella Rises app running at http://localhost:${PORT}`);
 });
+
+
+

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Participants</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <h1>Participants</h1>
+
+  <% if (currentUser.role === 'manager') { %>
+    <a href="/participants/new">Add Participant</a>
+  <% } %>
+
+  <table border="1" cellpadding="6" cellspacing="0">
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <% if (currentUser.role === 'manager') { %>
+        <th>Actions</th>
+      <% } %>
+    </tr>
+
+    <% participants.forEach(p => { %>
+      <tr>
+        <td><%= p.first_name %> <%= p.last_name %></td>
+        <td><%= p.email %></td>
+
+        <% if (currentUser.role === 'manager') { %>
+          <td>
+            <a href="/participants/<%= p.id %>/edit">Edit</a>
+
+            <form action="/participants/<%= p.id %>/delete" method="POST" style="display:inline;">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit">Delete</button>
+            </form>
+          </td>
+        <% } %>
+
+      </tr>
+    <% }) %>
+  </table>
+
+</body>
+</html>

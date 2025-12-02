@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <h1>Dashboard</h1>
+
+  <p>Welcome, <%= currentUser.email %>! Choose an area to manage.</p>
+
+  <ul>
+    <li><a href="/participants">Participants</a></li>
+    <!-- Later you will add: Events, Surveys, Milestones, Donations -->
+  </ul>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <h1><%= title %></h1>
+
+  <form action="<%= participant.id ? '/participants/' + participant.id : '/participants' %>" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <label>First Name</label><br>
+    <input
+      type="text"
+      name="first_name"
+      value="<%= participant.first_name || '' %>"
+      required
+    ><br><br>
+
+    <label>Last Name</label><br>
+    <input
+      type="text"
+      name="last_name"
+      value="<%= participant.last_name || '' %>"
+      required
+    ><br><br>
+
+    <label>Email</label><br>
+    <input
+      type="email"
+      name="email"
+      value="<%= participant.email || '' %>"
+    ><br><br>
+
+    <% if (participant.id) { %>
+      <button type="submit">Update Participant</button>
+    <% } else { %>
+      <button type="submit">Create Participant</button>
+    <% } %>
+  </form>
+
+</body>
+</html>
+
