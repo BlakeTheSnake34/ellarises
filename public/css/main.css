@@ -1,0 +1,417 @@
+/* ===========================
+   Ella Rises Brand Variables
+   =========================== */
+
+:root {
+  --er-blue:    #99B7C6;
+  --er-lilac:   #978EC4;
+  --er-cream:   #F9F5EA;
+  --er-blush:   #FFD8D1;
+  --er-pink:    #F9AFB1;
+  --er-sage:    #9AB59D;
+  --er-charcoal:#3A3F3B;
+  --er-peach:   #F4B092;
+  --er-rasp:    #CE325B;
+
+  --er-bg:      var(--er-cream);
+  --er-surface: #FFFFFF;
+  --er-text:    var(--er-charcoal);
+  --er-primary: var(--er-rasp);
+  --er-primary-soft: var(--er-pink);
+  --er-accent:  var(--er-sage);
+}
+
+/* ==============
+   Reset and base
+   ============== */
+
+* ,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--er-text);
+  background-color: var(--er-bg);
+}
+
+/* Layout wrappers */
+
+.page-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.page {
+  background-color: var(--er-surface);
+  border-radius: 18px;
+  padding: 1.75rem 1.5rem 2rem;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.06);
+  margin-top: 1.5rem;
+}
+
+/* Headings */
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "DM Serif Display", "Times New Roman", serif;
+  margin-top: 0;
+  color: var(--er-charcoal);
+}
+
+h1 {
+  font-size: 2.3rem;
+  letter-spacing: 0.04em;
+}
+
+h2 {
+  font-size: 1.7rem;
+}
+
+/* =========================
+   Two tone navigation bar
+   ========================= */
+
+.er-nav {
+  background-color: var(--er-blush);
+  padding: 1.1rem 1.4rem 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.er-nav::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0.55rem;
+  background-color: var(--er-cream);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.er-nav > .nav-left,
+.er-nav > .nav-right {
+  position: relative;
+  z-index: 1;
+}
+
+.nav-left a {
+  margin-right: 1rem;
+}
+
+.nav-right form {
+  display: inline;
+}
+
+/* Brand logo text and image */
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  font-family: "DM Serif Display", serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--er-charcoal);
+  text-decoration: none;
+}
+
+.nav-logo-img {
+  height: 48px;         /* bigger logo in nav */
+  width: 48px;
+  border-radius: 50%;
+  object-fit: contain;
+  margin-right: 0.55rem;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.15));
+}
+
+.er-nav a {
+  color: var(--er-charcoal);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.er-nav a:hover {
+  color: var(--er-rasp);
+}
+
+.er-nav button {
+  background-color: var(--er-rasp);
+  color: #ffffff;
+  border: none;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.er-nav button:hover {
+  background-color: #b22347;
+}
+
+/* ===========
+   Buttons etc
+   =========== */
+
+a.button-link {
+  display: inline-block;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  background: var(--er-primary);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+a.button-link:hover {
+  background: #b22347;
+}
+
+button,
+input[type="submit"] {
+  font-family: inherit;
+  border-radius: 999px;
+  border: none;
+  padding: 0.55rem 1.2rem;
+  background: var(--er-primary);
+  color: #ffffff;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+button:hover,
+input[type="submit"]:hover {
+  background: #b22347;
+}
+
+.button-secondary {
+  background: var(--er-accent);
+  color: var(--er-charcoal);
+}
+
+.button-secondary:hover {
+  background: #7c9d80;
+}
+
+/* ======
+   Forms
+   ====== */
+
+form {
+  max-width: 520px;
+}
+
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--er-pink);
+  border-color: var(--er-pink);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.form-row {
+  margin-bottom: 1rem;
+}
+
+/* ======
+   Tables
+   ====== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+}
+
+th {
+  background-color: var(--er-charcoal);
+  color: var(--er-cream);
+  font-weight: 600;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--er-cream);
+}
+
+tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+tbody tr:hover {
+  background-color: var(--er-blush);
+}
+
+td.actions {
+  white-space: nowrap;
+}
+
+td.actions form {
+  display: inline;
+}
+
+/* ===============
+   Flash messages
+   =============== */
+
+.flash {
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+}
+
+.flash.success {
+  background-color: var(--er-accent);
+  color: var(--er-charcoal);
+}
+
+.flash.error {
+  background-color: var(--er-rasp);
+  color: #ffffff;
+}
+
+/* =========================
+   Landing page hero section
+   ========================= */
+
+.landing-hero {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem 0;
+}
+
+.hero-left {
+  flex: 1 1 260px;
+  text-align: center;
+}
+
+.hero-right {
+  flex: 1 1 300px;
+}
+
+.hero-logo {
+  width: 230px;           /* bigger hero logo */
+  max-width: 90%;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.08));
+}
+
+.hero-text {
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  color: var(--er-charcoal);
+}
+
+/* =======================
+   Dashboard summary cards
+   ======================= */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+}
+
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.card-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* ===============
+   Responsive tweaks
+   =============== */
+
+@media (max-width: 700px) {
+  .er-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .page-wrap {
+    padding: 1rem 0.75rem 2rem;
+  }
+
+  .page {
+    padding: 1.25rem 1rem 1.75rem;
+  }
+
+  .landing-hero {
+    flex-direction: column;
+  }
+
+  .nav-left a {
+    margin-right: 0.6rem;
+  }
+}
+
+
+

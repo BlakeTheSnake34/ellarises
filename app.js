@@ -13,6 +13,7 @@ const { injectUser } = require('./middleware/auth');
 // Route imports
 const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
+const homeRoutes = require('./routes/home');           // new
 const dashboardRoutes = require('./routes/dashboard');
 const participantRoutes = require('./routes/participants');
 const eventRoutes = require('./routes/events');
@@ -63,6 +64,7 @@ app.use(injectUser);
 // Routes
 app.use('/', publicRoutes);
 app.use('/', authRoutes);
+app.use('/', homeRoutes);          // home screen for logged-in users
 app.use('/', dashboardRoutes);
 app.use('/', participantRoutes);
 app.use('/', eventRoutes);
@@ -95,6 +97,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Ella Rises app running at http://localhost:${PORT}`);
 });
+
 
 
 

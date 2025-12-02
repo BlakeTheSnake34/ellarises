@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title><%= title || 'Home – Ella Rises' %></title>
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+      <h1>Welcome to Ella Rises</h1>
+
+      <p>
+        Thank you for supporting Ella Rises. Use this home screen to jump quickly
+        to events, surveys, and (if you are a manager) admin tools.
+      </p>
+
+      <div class="card-grid">
+
+        <div class="card">
+          <div class="card-title">Explore Events</div>
+          <div class="card-value">Events</div>
+          <p>See upcoming and past workshops, mentoring sessions, and creative activities.</p>
+          <a href="/events" class="button-link button-secondary">View events</a>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Share Your Experience</div>
+          <div class="card-value">Surveys</div>
+          <p>Complete a post event survey to help Ella Rises improve future programs.</p>
+          <a href="/surveys/new" class="button-link button-secondary">Take a survey</a>
+        </div>
+
+        <% if (currentUser && currentUser.role === 'manager') { %>
+          <div class="card">
+            <div class="card-title">Manage Participants</div>
+            <div class="card-value">Admin</div>
+            <p>View and manage participants and event registrations.</p>
+            <a href="/participants" class="button-link">Go to admin tools</a>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Survey Results</div>
+            <div class="card-value">Insights</div>
+            <p>Review survey responses to understand impact and satisfaction.</p>
+            <a href="/surveys" class="button-link">View survey results</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

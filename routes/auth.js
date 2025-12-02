@@ -36,7 +36,7 @@ router.post('/login', async (req, res) => {
     };
 
     req.flash('success', 'Welcome back!');
-    res.redirect('/dashboard');
+    res.redirect('/home');    // changed from /dashboard
   } catch (err) {
     console.error(err);
     req.flash('error', 'Login error');
@@ -52,3 +52,4 @@ router.post('/logout', (req, res) => {
 });
 
 module.exports = router;
+

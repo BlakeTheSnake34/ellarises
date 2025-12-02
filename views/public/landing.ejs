@@ -1,17 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <title><%= title || 'Ella Rises' %></title>
+
+  <!-- Main styles -->
   <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <%- include('../partials/_nav') %>
   <%- include('../partials/_flash') %>
 
-  <h1>Ella Rises</h1>
-  <p>Empowering young women through STEAM mentoring, workshops, and leadership opportunities.</p>
+  <div class="page-wrap">
+    <div class="landing-hero">
+      <div class="hero-left">
+        <!-- make sure file name matches exactly: public/images/ella-logo.png -->
+        <img src="/images/ella-logo.png" class="hero-logo" alt="Ella Rises Logo">
+      </div>
 
-  <p>This is the public landing page for donors and supporters.</p>
+      <div class="hero-right">
+        <h1>Empowering Young Women in STEAM</h1>
+
+        <p class="hero-text">
+          Ella Rises helps young women build confidence, leadership, creativity,
+          and connection to their heritage through workshops, mentoring,
+          and hands-on STEAM experiences.
+        </p>
+
+        <% if (!currentUser) { %>
+          <a href="/login" class="button-link">Get Started</a>
+        <% } else { %>
+          <a href="/home" class="button-link">Go to Home</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
+
+
+
