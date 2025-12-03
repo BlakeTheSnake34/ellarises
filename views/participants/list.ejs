@@ -3,6 +3,32 @@
 <head>
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/main.css">
+
+  <style>
+    .pagination-container {
+      margin-top: 1.5rem;
+      text-align: right;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
+
+    .page-input {
+      width: 70px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    .participants-table th,
+    .participants-table td {
+      text-align: left;
+      padding: .4rem .6rem;
+    }
+  </style>
 </head>
 <body>
 
@@ -81,64 +107,57 @@
         </tbody>
       </table>
 
-      <!-- Pagination controls -->
+      <!-- ========================= -->
+      <!-- COMPACT PAGINATION + JUMP -->
+      <!-- ========================= -->
       <% if (totalPages && totalPages > 1) { %>
-        <div class="pagination" style="margin-top: 1rem;">
-          <!-- Previous -->
+        <div class="pagination-container">
+
+          <!-- Prev -->
           <% if (currentPage > 1) { %>
-            <a
-              href="/participants?page=<%= currentPage - 1 %><%= q ? '&q=' + q : '' %>"
-              class="button-secondary"
-            >
-              Previous
+            <a class="btn-edit"
+              href="/participants?page=<%= currentPage - 1 %><%= q ? '&q=' + q : '' %>">
+              ← Prev
             </a>
           <% } else { %>
-            <span class="button-secondary" style="opacity: 0.5; pointer-events: none;">Previous</span>
+            <span class="btn-edit" style="opacity: .4; pointer-events:none;">← Prev</span>
           <% } %>
 
-          <!-- Page numbers -->
-          <% for (let p = 1; p <= totalPages; p++) { %>
-            <% if (p === currentPage) { %>
-              <span class="button-secondary" style="margin: 0 0.25rem; font-weight: 700;">
-                <%= p %>
-              </span>
-            <% } else { %>
-              <a
-                href="/participants?page=<%= p %><%= q ? '&q=' + q : '' %>"
-                class="button-secondary"
-                style="margin: 0 0.25rem;"
-              >
-                <%= p %>
-              </a>
-            <% } %>
-          <% } %>
+          <!-- Page display -->
+          <span style="font-weight:600;">
+            Page <%= currentPage %> of <%= totalPages %>
+          </span>
+
+          <!-- Jump-to-page input -->
+          <form method="GET" action="/participants" style="display:flex; align-items:center; gap:.4rem;">
+            <input type="hidden" name="q" value="<%= q || '' %>">
+
+            <input
+              type="number"
+              name="page"
+              min="1"
+              max="<%= totalPages %>"
+              class="page-input"
+              placeholder="Page"
+            >
+            <button type="submit" class="btn-edit">Go</button>
+          </form>
 
           <!-- Next -->
           <% if (currentPage < totalPages) { %>
-            <a
-              href="/participants?page=<%= currentPage + 1 %><%= q ? '&q=' + q : '' %>"
-              class="button-secondary"
-            >
-              Next
+            <a class="btn-edit"
+              href="/participants?page=<%= currentPage + 1 %><%= q ? '&q=' + q : '' %>">
+              Next →
             </a>
           <% } else { %>
-            <span class="button-secondary" style="opacity: 0.5; pointer-events: none;">Next</span>
+            <span class="btn-edit" style="opacity: .4; pointer-events:none;">Next →</span>
           <% } %>
+
         </div>
       <% } %>
+
     </div>
   </div>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
