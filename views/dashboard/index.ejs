@@ -5,28 +5,30 @@
   <link rel="stylesheet" href="/css/main.css">
 
   <style>
-    /* New wrapper to center and add spacing */
+
+    /* The outer wrapper gives clean spacing & centers */
     .dashboard-wrapper {
-      max-width: 1400px;   /* Shrink slightly */
-      margin: 0 auto;      /* Center horizontally */
-      padding: 24px;       /* ~1 inch padding all around */
+      padding: 24px;   /* ~1 inch padding */
+      display: flex;
+      justify-content: center;
     }
 
-    /* Your existing styles */
-    .dashboard-container {
+    /* Inner wrapper controls the scale */
+    .dashboard-scale {
+      transform: scale(0.90);   /* shrink to 90% */
+      transform-origin: top center;
       width: 100%;
-      max-width: 1600px;
-      margin: 20px auto;
     }
 
+    /* Ensure Tableau gets full space before scaling */
     .tableauPlaceholder {
       width: 100%;
-      height: 85vh;
-      border-radius: 12px;   /* Optional: rounded corners */
-      overflow: hidden;      /* Prevent scrollbars */
+      height: 100vh;   /* full height so nothing gets cut */
     }
+
   </style>
 </head>
+
 <body>
 
   <%- include('../partials/_nav') %>
@@ -34,16 +36,19 @@
 
   <h1>Dashboard</h1>
 
-  <!-- ⭐ NEW WRAPPER FOR CLEAN MARGINS & CENTERING -->
+  <!-- Outer centering + padding -->
   <div class="dashboard-wrapper">
 
-    <div class="dashboard-container">
+    <!-- Inner scaling wrapper -->
+    <div class="dashboard-scale">
 
-      <!-- Tableau Embed Code -->
+      <!-- Tableau embed (unchanged) -->
       <div class='tableauPlaceholder' id='viz1764801900541' style='position: relative'>
         <noscript>
           <a href='#'>
-            <img alt='Dashboard Image' src='https://public.tableau.com/static/images/In/IntexDashboard-Group6/Dashboard1/1_rss.png' style='border: none' />
+            <img alt='Dashboard Image'
+              src='https://public.tableau.com/static/images/In/IntexDashboard-Group6/Dashboard1/1_rss.png'
+              style='border: none' />
           </a>
         </noscript>
 
@@ -54,7 +59,8 @@
           <param name='name' value='IntexDashboard-Group6/Dashboard1' />
           <param name='tabs' value='yes' />
           <param name='toolbar' value='yes' />
-          <param name='static_image' value='https://public.tableau.com/static/images/In/IntexDashboard-Group6/Dashboard1/1.png' />
+          <param name='static_image'
+            value='https://public.tableau.com/static/images/In/IntexDashboard-Group6/Dashboard1/1.png' />
           <param name='animate_transition' value='yes' />
           <param name='display_static_image' value='yes' />
           <param name='display_spinner' value='yes' />
@@ -68,6 +74,7 @@
         var divElement = document.getElementById('viz1764801900541');
         var vizElement = divElement.getElementsByTagName('object')[0];
 
+        /* Keep your existing adaptive logic */
         if (divElement.offsetWidth > 800) {
           vizElement.style.minWidth = '1500px';
           vizElement.style.maxWidth = '100%';
@@ -89,8 +96,8 @@
         vizElement.parentNode.insertBefore(scriptElement, vizElement);
       </script>
 
-    </div> <!-- end dashboard-container -->
-  </div> <!-- end dashboard-wrapper -->
+    </div> <!-- end scaling -->
+  </div> <!-- end wrapper -->
 
 </body>
 </html>
