@@ -6,45 +6,70 @@
 </head>
 <body>
 
-<%- include('../partials/_nav') %>
-<%- include('../partials/_flash') %>
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
 
-<h1>Events</h1>
+  <div class="page-wrap">
+    <div class="page">
 
-<% if (currentUser.role === 'manager') { %>
-  <p><a href="/events/new">Add Event</a></p>
-<% } %>
-
-<table border="1" cellpadding="6">
-  <tr>
-    <th>Name</th>
-    <th>Type</th>
-    <th>Recurrence</th>
-    <th>Default Capacity</th>
-    <th>Description</th>
-    <% if (currentUser.role === 'manager') { %><th>Actions</th><% } %>
-  </tr>
-
-  <% events.forEach(evt => { %>
-    <tr>
-      <td><%= evt.eventname %></td>
-      <td><%= evt.eventtype || '' %></td>
-      <td><%= evt.eventrecurrencepattern || '' %></td>
-      <td><%= evt.eventdefaultcapacity || '' %></td>
-      <td><%= evt.eventdescription || '' %></td>
+      <h1>Events</h1>
 
       <% if (currentUser.role === 'manager') { %>
-        <td>
-          <a href="/events/<%= evt.eventname %>/edit">Edit</a>
-          <form action="/events/<%= evt.eventname %>/delete" method="POST" style="display:inline;">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button type="submit">Delete</button>
-          </form>
-        </td>
+        <p>
+          <a href="/events/new" class="btn-add">+ Add Event</a>
+        </p>
       <% } %>
-    </tr>
-  <% }) %>
-</table>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Recurrence</th>
+            <th>Default Capacity</th>
+            <th>Description</th>
+            <% if (currentUser.role === 'manager') { %>
+              <th>Actions</th>
+            <% } %>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% events.forEach(evt => { %>
+            <tr>
+              <td><%= evt.eventname %></td>
+              <td><%= evt.eventtype || '' %></td>
+              <td><%= evt.eventrecurrencepattern || '' %></td>
+              <td><%= evt.eventdefaultcapacity || '' %></td>
+              <td><%= evt.eventdescription || '' %></td>
+
+              <% if (currentUser.role === 'manager') { %>
+                <td class="actions">
+                  <a href="/events/<%= evt.eventname %>/edit" class="btn-edit">
+                    Edit
+                  </a>
+
+                  <form
+                    action="/events/<%= evt.eventname %>/delete"
+                    method="POST"
+                    class="inline-form">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-delete">
+                      Delete
+                    </button>
+                  </form>
+                </td>
+              <% } %>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
 
 </body>
 </html>
+
+
+

@@ -226,9 +226,11 @@ input[type="submit"]:hover {
   background-color: #7c9d80;
 }
 
+/* Edit is green accent */
+
 .btn-edit {
   display: inline-block;
-  background-color: var(--er-blue);
+  background-color: var(--er-accent);
   color: var(--er-charcoal);
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
@@ -239,8 +241,10 @@ input[type="submit"]:hover {
 }
 
 .btn-edit:hover {
-  background-color: #7fa0b3;
+  background-color: #7c9d80;
 }
+
+/* Delete is primary raspberry */
 
 .btn-delete {
   background-color: var(--er-primary);
@@ -279,6 +283,13 @@ input[type="submit"]:hover {
 
 .link-back:hover {
   color: var(--er-lilac);
+}
+
+/* inline form so Edit and Delete sit on one line */
+
+.inline-form {
+  display: inline;
+  margin: 0;
 }
 
 /* ======
@@ -488,12 +499,12 @@ td.actions form {
   }
 }
 
-
 /* ===========================
    Wider container for Surveys
    =========================== */
+
 .survey-wide {
-  max-width: 1650px !important; 
+  max-width: 1650px !important;
 }
 
 .survey-wide-page {
@@ -501,3 +512,4 @@ td.actions form {
   max-width: 1650px;
   margin: 0 auto;
 }
+
