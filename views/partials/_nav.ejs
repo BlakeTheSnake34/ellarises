@@ -14,7 +14,11 @@
       <a href="/home">Home</a>
       <a href="/events">Events</a>
       <a href="/my-donations">My Donations</a>
-      <a href="/surveys/new">Take Survey</a>
+
+      <!-- Only NON-managers see Take Survey -->
+      <% if (currentUser.role !== 'manager') { %>
+        <a href="/surveys/new">Take Survey</a>
+      <% } %>
 
       <% if (currentUser.role === 'manager') { %>
         <span class="nav-divider"></span>
