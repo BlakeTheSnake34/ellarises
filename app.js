@@ -25,18 +25,53 @@ const surveyRoutes = require('./routes/surveys');   // Mounted later at /surveys
 const app = express();
 
 // Security headers
+// Security headers
 app.use(
   helmet({
     contentSecurityPolicy: {
       useDefaults: true,
       directives: {
-        "script-src": ["'self'"],
-        "style-src": ["'self'", "'unsafe-inline'"],
-        "img-src": ["'self'", "data:"],
+        "default-src": ["'self'"],
+
+        // Allow Tableau scripts
+        "script-src": [
+          "'self'",
+          "'unsafe-inline'",
+          "https://public.tableau.com",
+          "https://public.tableau.com/javascripts/api/"
+        ],
+
+        // Allow Google Fonts + inline styles + Tableau styles
+        "style-src": [
+          "'self'",
+          "'unsafe-inline'",
+          "https://fonts.googleapis.com"
+        ],
+
+        // Allow Google Fonts host + Tableau font loading
+        "font-src": [
+          "'self'",
+          "https://fonts.gstatic.com",
+          "data:"
+        ],
+
+        // Allow Tableau images + embedded content
+        "img-src": [
+          "'self'",
+          "data:",
+          "https://public.tableau.com"
+        ],
+
+        // Allow Tableau iframe embeds
+        "frame-src": [
+          "'self'",
+          "https://public.tableau.com"
+        ]
       }
     }
   })
 );
+
 
 // View engine setup
 app.set('view engine', 'ejs');
