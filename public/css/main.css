@@ -507,9 +507,32 @@ td.actions form {
   max-width: 1650px !important;
 }
 
+/* ====== Ella Rises Homepage Image Strip ====== */
+
+.hero-gallery {
+  width: 100%;
+  padding: 20px 0;
+  background-color: #fdfdfd; /* very light background */
+}
+
+.hero-gallery-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px;
+}
+
+.hero-gallery-row img {
+  height: 150px; /* adjust this number to make images taller or shorter */
+  border-radius: 6px;
+  object-fit: cover;
+}
+
 .survey-wide-page {
   width: 100%;
   max-width: 1650px;
   margin: 0 auto;
 }
+
 
