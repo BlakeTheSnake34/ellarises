@@ -9,35 +9,36 @@
   <%- include('../partials/_nav') %>
   <%- include('../partials/_flash') %>
 
-  <h1>My Donations</h1>
+  <div class="page-wrap">
+    <div class="page">
+      <h1>My Donations</h1>
 
-  <a href="/my-donations/new" class="btn">Make a Donation</a>
+      <a href="/my-donations/new" class="btn-add" style="margin-bottom:1rem; display:inline-block;">
+        + Make Donation
+      </a>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Amount</th>
-      </tr>
-    </thead>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
 
-    <tbody>
-      <% donations.forEach(d => { %>
-        <tr>
+        <tbody>
+          <% donations.forEach(d => { %>
+            <tr>
+              <td>
+                <%= d.date ? d.date.toISOString().slice(0, 10) : "N/A" %>
+              </td>
 
-          <td>
-            <%= d.date
-                ? d.date.toISOString().slice(0, 10)
-                : "No Date"
-            %>
-          </td>
+              <td>$<%= d.amount %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
 
-          <td>$<%= d.amount %></td>
-
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-
+    </div>
+  </div>
 </body>
 </html>

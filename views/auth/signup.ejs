@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Signup</title>
+  <title><%= title %></title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -9,27 +9,115 @@
   <%- include('../partials/_nav') %>
   <%- include('../partials/_flash') %>
 
-  <h1>Create Account</h1>
+  <div class="page-wrap">
+    <div class="page">
+      <h1>Create an Account</h1>
 
-  <form action="/signup" method="POST" class="form-container">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <form action="/signup" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-    <label>Email:</label>
-    <input type="email" name="email" required>
+        <!-- ============================
+             USER ACCOUNT FIELDS
+        ============================= -->
+        <div class="form-row">
+          <label>Email</label>
+          <input type="email" name="email" required>
+        </div>
 
-    <label>Password:</label>
-    <input type="password" name="password" required>
+        <div class="form-row">
+          <label>Password</label>
+          <input type="password" name="password" required>
+        </div>
 
-    <label>First Name:</label>
-    <input type="text" name="first_name" placeholder="(optional)">
+        <!-- ============================
+             PARTICIPANT INFO FIELDS
+        ============================= -->
+        <h2>Your Information</h2>
 
-    <label>Last Name:</label>
-    <input type="text" name="last_name" placeholder="(optional)">
+        <div class="form-row">
+          <label>First Name</label>
+          <input type="text" name="first_name" required>
+        </div>
 
-    <button type="submit" class="btn-primary">Create Account</button>
-  </form>
+        <div class="form-row">
+          <label>Last Name</label>
+          <input type="text" name="last_name" required>
+        </div>
 
-  <p>Already have an account? <a href="/login">Log in</a></p>
+        <div class="form-row">
+          <label>Date of Birth</label>
+          <input type="date" name="dob">
+        </div>
+
+        <div class="form-row">
+          <label>Phone Number</label>
+          <input type="text" name="phone">
+        </div>
+
+        <div class="form-row">
+          <label>School or Employer</label>
+          <input type="text" name="school_or_employer">
+        </div>
+
+        <div class="form-row">
+          <label>Field of Interest</label>
+          <input type="text" name="field_of_interest">
+        </div>
+
+        <div class="form-row">
+          <label>ZIP Code</label>
+          <input type="text" name="zip">
+        </div>
+
+        <!-- ============================
+             MANAGER ACCOUNT OPTION
+        ============================= -->
+        <div class="page" style="background: var(--er-blush); padding: 1rem; margin-top: 1.5rem;">
+          <label style="font-weight: 600;">
+            <input type="checkbox" id="isManagerCheck">
+            Register as Manager?
+          </label>
+
+          <div id="managerFields" style="display:none; margin-top: 1rem;">
+            <div class="form-row">
+              <label>Manager Access Code</label>
+              <input type="text" name="manager_code">
+            </div>
+
+            <input type="hidden" name="role" id="roleInput" value="U">
+          </div>
+        </div>
+
+        <!-- ============================
+             SUBMIT BUTTON
+        ============================= -->
+        <button type="submit" class="btn-primary" style="margin-top: 1.5rem;">
+          Create Account
+        </button>
+      </form>
+
+      <p style="margin-top: 1rem;">
+        Already have an account?
+        <a href="/login" class="link-back">Login here</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const isManagerCheck = document.getElementById('isManagerCheck');
+    const managerFields = document.getElementById('managerFields');
+    const roleInput = document.getElementById('roleInput');
+
+    isManagerCheck.addEventListener('change', () => {
+      if (isManagerCheck.checked) {
+        managerFields.style.display = 'block';
+        roleInput.value = 'M';
+      } else {
+        managerFields.style.display = 'none';
+        roleInput.value = 'U';
+      }
+    });
+  </script>
 
 </body>
 </html>
