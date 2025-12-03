@@ -11,22 +11,44 @@
 
 <h1><%= title %></h1>
 
-<form action="<%= event.id ? '/events/' + event.id : '/events' %>" method="POST">
+<form action="<%= event.eventname ? '/events/' + event.eventname : '/events' %>" method="POST">
   <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
   <label>Name</label><br>
-  <input type="text" name="name" value="<%= event.name || '' %>" required><br><br>
-
-  <label>Date</label><br>
-  <input type="date" name="event_date" value="<%= event.event_date || '' %>"><br><br>
+  <input
+    type="text"
+    name="eventname"
+    value="<%= event.eventname || '' %>"
+    required
+  ><br><br>
 
   <label>Type</label><br>
-  <input type="text" name="event_type" value="<%= event.event_type || '' %>"><br><br>
+  <input
+    type="text"
+    name="eventtype"
+    value="<%= event.eventtype || '' %>"
+  ><br><br>
+
+  <label>Recurrence Pattern</label><br>
+  <input
+    type="text"
+    name="eventrecurrencepattern"
+    value="<%= event.eventrecurrencepattern || '' %>"
+  ><br><br>
+
+  <label>Default Capacity</label><br>
+  <input
+    type="number"
+    name="eventdefaultcapacity"
+    value="<%= event.eventdefaultcapacity || '' %>"
+  ><br><br>
 
   <label>Description</label><br>
-  <textarea name="description"><%= event.description || '' %></textarea><br><br>
+  <textarea name="eventdescription"><%= event.eventdescription || '' %></textarea><br><br>
 
-  <button type="submit"><%= event.id ? "Update Event" : "Create Event" %></button>
+  <button type="submit">
+    <%= event.eventname ? "Update Event" : "Create Event" %>
+  </button>
 </form>
 
 </body>
