@@ -13,18 +13,17 @@ const { injectUser } = require('./middleware/auth');
 // Route imports
 const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
-const homeRoutes = require('./routes/home');           // new
+const homeRoutes = require('./routes/home');
 const dashboardRoutes = require('./routes/dashboard');
 const participantRoutes = require('./routes/participants');
 const eventRoutes = require('./routes/events');
 const surveyRoutes = require('./routes/surveys');
-const registrationRoutes = require('./routes/registrations'); // new
+const registrationRoutes = require('./routes/registrations');
 const donationRoutes = require('./routes/donations');
-// later: milestones, donations
+const adminRoutes = require('./routes/admin');        // NEW: manager tools (make manager)
 
 const app = express();
 
-// Security headers
 // Security headers with custom CSP allowing our script file
 app.use(
   helmet({
@@ -38,7 +37,6 @@ app.use(
     }
   })
 );
-
 
 // View engine setup
 app.set('view engine', 'ejs');
@@ -78,13 +76,14 @@ app.use(injectUser);
 // Routes
 app.use('/', publicRoutes);
 app.use('/', authRoutes);
-app.use('/', homeRoutes);          // home screen for logged-in users
+app.use('/', homeRoutes);           // home screen for logged-in users
 app.use('/', dashboardRoutes);
 app.use('/', participantRoutes);
 app.use('/', eventRoutes);
-app.use('/surveys', surveyRoutes);
+app.use('/', surveyRoutes);         // FIX: mount at root so /surveys works
 app.use('/', registrationRoutes);
 app.use('/', donationRoutes);
+app.use('/', adminRoutes);          // NEW: /admin/make-manager, manager tools
 
 // IS 404 Requirement: HTTP 418
 app.get('/teapot', (req, res) => {
@@ -112,6 +111,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Ella Rises app running at http://localhost:${PORT}`);
 });
+
 
 
 
