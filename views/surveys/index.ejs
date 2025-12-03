@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="/css/main.css">
 
   <style>
+    /* Search bar styling */
     .survey-search-bar {
       display: flex;
       gap: 1rem;
@@ -22,23 +23,73 @@
       border: 1px solid #ccc;
       font-size: 1rem;
     }
-    .comment-toggle-btn {
+
+    /* Modal trigger button */
+    .comment-btn {
       background: var(--er-blue);
       color: var(--er-charcoal);
+      padding: 4px 10px;
+      border-radius: 8px;
       border: none;
-      padding: 3px 10px;
-      font-size: 0.75rem;
-      border-radius: 10px;
       cursor: pointer;
+      font-size: .8rem;
+      font-weight: 600;
     }
-    .comment-toggle-btn:hover {
+    .comment-btn:hover {
       background: var(--er-blush);
     }
+
+    /* Sortable headers */
     th a {
       color: var(--er-cream);
       text-decoration: underline;
       cursor: pointer;
     }
+
+    /* Modal overlay */
+    .er-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Modal box */
+    .er-modal-box {
+      background: white;
+      width: 520px;
+      max-height: 70vh;
+      border-radius: 14px;
+      padding: 1.5rem;
+      overflow-y: auto;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .er-modal-box h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      color: var(--er-charcoal);
+    }
+
+    .er-modal-close {
+      display: inline-block;
+      margin-top: 1rem;
+      background: var(--er-blue);
+      padding: .5rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+      border: none;
+    }
+    .er-modal-close:hover {
+      background: var(--er-blush);
+    }
+
   </style>
 </head>
 
@@ -61,6 +112,7 @@
              value="<%= search %>"
              class="survey-input">
 
+      <!-- Event Filter -->
       <select name="event" class="survey-select">
         <option value="">All Events</option>
         <% eventsList.forEach(e => { %>
@@ -70,6 +122,7 @@
         <% }) %>
       </select>
 
+      <!-- Sort dropdown -->
       <select name="sort" class="survey-select">
         <option value="date_desc" <%= sort === "date_desc" ? "selected" : "" %>>Newest First</option>
         <option value="date_asc"  <%= sort === "date_asc"  ? "selected" : "" %>>Oldest First</option>
@@ -90,61 +143,15 @@
             <th>Participant</th>
             <th>Email</th>
 
-            <!-- EVENT sortable -->
-            <th>
-              <a href="/surveys?<%= `sort=${sort === 'event_asc' ? 'event_desc' : 'event_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
-                Event
-                <% if (sort === 'event_asc') { %> ▲ <% } %>
-                <% if (sort === 'event_desc') { %> ▼ <% } %>
-              </a>
-            </th>
+            <th><a href="/surveys?sort=<%= sort === 'event_asc' ? 'event_desc' : 'event_asc' %>&search=<%= search %>&event=<%= event %>">Event</a></th>
 
             <th>Start Time</th>
 
-            <!-- OVERALL -->
-            <th>
-              <a href="/surveys?<%= `sort=${sort === 'overall_asc' ? 'overall_desc' : 'overall_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
-                Overall
-                <% if (sort === 'overall_asc') { %> ▲ <% } %>
-                <% if (sort === 'overall_desc') { %> ▼ <% } %>
-              </a>
-            </th>
-
-            <!-- SATISFACTION -->
-            <th>
-              <a href="/surveys?<%= `sort=${sort === 'satisfaction_asc' ? 'satisfaction_desc' : 'satisfaction_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
-                Satisfaction
-                <% if (sort === 'satisfaction_asc') { %> ▲ <% } %>
-                <% if (sort === 'satisfaction_desc') { %> ▼ <% } %>
-              </a>
-            </th>
-
-            <!-- USEFULNESS -->
-            <th>
-              <a href="/surveys?<%= `sort=${sort === 'usefulness_asc' ? 'usefulness_desc' : 'usefulness_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
-                Usefulness
-                <% if (sort === 'usefulness_asc') { %> ▲ <% } %>
-                <% if (sort === 'usefulness_desc') { %> ▼ <% } %>
-              </a>
-            </th>
-
-            <!-- INSTRUCTOR -->
-            <th>
-              <a href="/surveys?<%= `sort=${sort === 'instructor_asc' ? 'instructor_desc' : 'instructor_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
-                Instructor
-                <% if (sort === 'instructor_asc') { %> ▲ <% } %>
-                <% if (sort === 'instructor_desc') { %> ▼ <% } %>
-              </a>
-            </th>
-
-            <!-- RECOMMEND -->
-            <th>
-              <a href="/surveys?<%= `sort=${sort === 'recommend_asc' ? 'recommend_desc' : 'recommend_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
-                Recommend
-                <% if (sort === 'recommend_asc') { %> ▲ <% } %>
-                <% if (sort === 'recommend_desc') { %> ▼ <% } %>
-              </a>
-            </th>
+            <th><a href="/surveys?sort=<%= sort === 'overall_asc' ? 'overall_desc' : 'overall_asc' %>&search=<%= search %>&event=<%= event %>">Overall</a></th>
+            <th><a href="/surveys?sort=<%= sort === 'satisfaction_asc' ? 'satisfaction_desc' : 'satisfaction_asc' %>&search=<%= search %>&event=<%= event %>">Satisfaction</a></th>
+            <th><a href="/surveys?sort=<%= sort === 'usefulness_asc' ? 'usefulness_desc' : 'usefulness_asc' %>&search=<%= search %>&event=<%= event %>">Usefulness</a></th>
+            <th><a href="/surveys?sort=<%= sort === 'instructor_asc' ? 'instructor_desc' : 'instructor_asc' %>&search=<%= search %>&event=<%= event %>">Instructor</a></th>
+            <th><a href="/surveys?sort=<%= sort === 'recommend_asc' ? 'recommend_desc' : 'recommend_asc' %>&search=<%= search %>&event=<%= event %>">Recommend</a></th>
 
             <th>NPS</th>
             <th>Comments</th>
@@ -161,29 +168,27 @@
               <td><%= s.eventname %></td>
               <td><%= s.eventdatetimestart ? new Date(s.eventdatetimestart).toLocaleString() : "N/A" %></td>
 
-              <td><%= s.surveyoverallscore %></td>
-              <td><%= s.surveysatisfactionscore %></td>
-              <td><%= s.surveyusefulnessscore %></td>
-              <td><%= s.surveyinstructorscore %></td>
-              <td><%= s.surveyrecommendationscore %></td>
-              <td><%= s.surveynpsbucket %></td>
+              <td style="text-align:center;"><%= s.surveyoverallscore %></td>
+              <td style="text-align:center;"><%= s.surveysatisfactionscore %></td>
+              <td style="text-align:center;"><%= s.surveyusefulnessscore %></td>
+              <td style="text-align:center;"><%= s.surveyinstructorscore %></td>
+              <td style="text-align:center;"><%= s.surveyrecommendationscore %></td>
 
-              <td class="comment-cell">
-                <% if (s.surveycomments && s.surveycomments.length > 120) { %>
+              <td style="text-align:center;"><%= s.surveynpsbucket %></td>
 
-                  <span class="comment-short"><%= s.surveycomments.slice(0, 120) %>...</span>
-                  <span class="comment-full" style="display:none;"><%= s.surveycomments %></span>
-                  <button type="button" class="comment-toggle-btn btn-more">More</button>
-                  <button type="button" class="comment-toggle-btn btn-less" style="display:none;">Less</button>
-
+              <td style="text-align:center;">
+                <% if (s.surveycomments && s.surveycomments.trim() !== "") { %>
+                  <button 
+                    class="comment-btn open-comment" 
+                    data-comment="<%= s.surveycomments.replace(/"/g, '&quot;') %>">
+                    View
+                  </button>
                 <% } else { %>
-                  <%= s.surveycomments || "" %>
+                  —
                 <% } %>
               </td>
 
-              <td>
-                <%= s.surveysubmissiondate ? new Date(s.surveysubmissiondate).toLocaleString() : "N/A" %>
-              </td>
+              <td><%= s.surveysubmissiondate ? new Date(s.surveysubmissiondate).toLocaleString() : "N/A" %></td>
 
             </tr>
           <% }) %>
@@ -192,30 +197,35 @@
     </div>
 
     <!-- PAGINATION -->
-    <div style="margin-top: 1.5rem; text-align: right;">
+    <div style="margin-top: 1.5rem; text-align:right;">
       <% if (currentPage > 1) { %>
-        <a class="btn-edit"
-           href="/surveys?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>&event=<%= event %>">
-          ← Prev
-        </a>
+        <a class="btn-edit" 
+           href="/surveys?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>&event=<%= event %>">← Prev</a>
       <% } %>
 
-      <span style="margin: 0 10px; font-weight: 600;">
+      <span style="margin:0 10px;font-weight:600;">
         Page <%= currentPage %> of <%= totalPages %>
       </span>
 
       <% if (currentPage < totalPages) { %>
-        <a class="btn-edit"
-           href="/surveys?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>&event=<%= event %>">
-          Next → 
-        </a>
+        <a class="btn-edit" 
+           href="/surveys?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>&event=<%= event %>">Next →</a>
       <% } %>
     </div>
 
   </div>
 </div>
 
-<script src="/js/survey-comments.js"></script>
+<!-- 🔥 MODAL HTML -->
+<div id="erModal" class="er-modal-overlay">
+  <div class="er-modal-box">
+    <h3>Survey Comment</h3>
+    <p id="erModalText"></p>
+    <button class="er-modal-close" id="erModalClose">Close</button>
+  </div>
+</div>
+
+<script src="/js/survey-modal.js"></script>
 
 </body>
 </html>

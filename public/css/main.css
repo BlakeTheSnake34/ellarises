@@ -573,5 +573,13 @@ td.actions form {
 }
 
 
+/* Modal scroll fix */
+.er-modal-box::-webkit-scrollbar {
+  width: 8px;
+}
+.er-modal-box::-webkit-scrollbar-thumb {
+  background: var(--er-blue);
+  border-radius: 4px;
+}
 
 
