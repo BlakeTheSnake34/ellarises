@@ -9,63 +9,27 @@
   <%- include('../partials/_nav') %>
   <%- include('../partials/_flash') %>
 
-  <div class="page-wrap">
-    <div class="page">
-      <h1><%= title %></h1>
+  <h1><%= title %></h1>
 
-      <%
-        const formatDate = (val) => {
-          if (!val) return '';
-          try {
-            return new Date(val).toISOString().slice(0, 10);
-          } catch (e) {
-            return val;
-          }
-        };
-      %>
+  <form action="<%= donation.donationid ? '/donations/' + donation.donationid : '/donations' %>" method="POST">
 
-      <form action="<%= donation.DonationID ? '/donations/' + donation.DonationID : '/donations' %>" method="POST">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-        <div class="form-row">
-          <label for="participant_email">Participant Email</label>
-          <input
-            id="participant_email"
-            type="email"
-            name="participant_email"
-            value="<%= donation.ParticipantEmail || '' %>"
-            required
-          >
-        </div>
+    <label>Participant Email</label>
+    <input type="email" name="participant_email" required
+           value="<%= donation.participantemail || '' %>">
 
-        <div class="form-row">
-          <label for="donation_date">Donation Date</label>
-          <input
-            id="donation_date"
-            type="date"
-            name="donation_date"
-            value="<%= formatDate(donation.DonationDate) %>"
-            required
-          >
-        </div>
+    <label>Donation Date</label>
+    <input type="date" name="donation_date" required
+           value="<%= donation.donationdate ? donation.donationdate.toISOString().slice(0,10) : '' %>">
 
-        <div class="form-row">
-          <label for="donation_amount">Donation Amount (USD)</label>
-          <input
-            id="donation_amount"
-            type="number"
-            name="donation_amount"
-            step="0.01"
-            min="0"
-            value="<%= donation.DonationAmount || '' %>"
-            required
-          >
-        </div>
+    <label>Donation Amount ($)</label>
+    <input type="number" name="donation_amount" required step="0.01"
+           value="<%= donation.donationamount || '' %>">
 
-        <button type="submit"><%= donation.DonationID ? 'Update Donation' : 'Create Donation' %></button>
-      </form>
-    </div>
-  </div>
+    <button type="submit" class="btn">Save Donation</button>
+
+  </form>
 
 </body>
 </html>
