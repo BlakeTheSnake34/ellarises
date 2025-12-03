@@ -87,8 +87,8 @@ h2 {
   background-color: var(--er-blush);
   padding: 1.1rem 1.4rem 0.9rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   position: relative;
 }
@@ -104,18 +104,44 @@ h2 {
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.er-nav > .nav-left,
-.er-nav > .nav-right {
+.nav-left,
+.nav-middle,
+.nav-right {
   position: relative;
   z-index: 1;
 }
 
-.nav-left a {
-  margin-right: 1rem;
+/* left brand */
+
+.nav-left {
+  display: flex;
+  align-items: center;
 }
 
-.nav-right form {
-  display: inline;
+/* middle navigation links */
+
+.nav-middle {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* right actions */
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* subtle divider before manager links */
+
+.nav-divider {
+  width: 1px;
+  height: 22px;
+  background: rgba(0, 0, 0, 0.12);
 }
 
 /* Brand logo text and image */
@@ -128,6 +154,7 @@ h2 {
   font-weight: 600;
   color: var(--er-charcoal);
   text-decoration: none;
+  margin-right: 1.5rem;
 }
 
 .nav-logo-img {
@@ -482,6 +509,20 @@ td.actions form {
     gap: 0.5rem;
   }
 
+  .nav-left {
+    margin-bottom: 0.25rem;
+  }
+
+  .nav-middle {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.9rem;
+  }
+
+  .nav-right {
+    align-self: flex-end;
+  }
+
   .page-wrap {
     padding: 1rem 0.75rem 2rem;
   }
@@ -493,10 +534,6 @@ td.actions form {
   .landing-hero {
     flex-direction: column;
   }
-
-  .nav-left a {
-    margin-right: 0.6rem;
-  }
 }
 
 /* ===========================
@@ -507,12 +544,18 @@ td.actions form {
   max-width: 1650px !important;
 }
 
+.survey-wide-page {
+  width: 100%;
+  max-width: 1650px;
+  margin: 0 auto;
+}
+
 /* ====== Ella Rises Homepage Image Strip ====== */
 
 .hero-gallery {
   width: 100%;
   padding: 20px 0;
-  background-color: #fdfdfd; /* very light background */
+  background-color: #fdfdfd;
 }
 
 .hero-gallery-row {
@@ -524,15 +567,11 @@ td.actions form {
 }
 
 .hero-gallery-row img {
-  height: 150px; /* adjust this number to make images taller or shorter */
+  height: 150px;
   border-radius: 6px;
   object-fit: cover;
 }
 
-.survey-wide-page {
-  width: 100%;
-  max-width: 1650px;
-  margin: 0 auto;
-}
+
 
 

@@ -1,24 +1,23 @@
 <nav class="er-nav">
-  <div class="nav-left">
 
-    <!-- Logo + Brand -->
+  <!-- LEFT: brand -->
+  <div class="nav-left">
     <a href="/" class="nav-logo">
       <img src="/images/ella-logo.png" class="nav-logo-img" alt="Ella Rises Logo">
       Ella Rises
     </a>
+  </div>
 
+  <!-- MIDDLE: navigation links -->
+  <div class="nav-middle">
     <% if (currentUser) { %>
-
-      <!-- HOME visible to ALL logged-in users -->
       <a href="/home">Home</a>
-
-      <!-- Visible to ALL logged-in users -->
       <a href="/events">Events</a>
       <a href="/my-donations">My Donations</a>
       <a href="/surveys/new">Take Survey</a>
 
       <% if (currentUser.role === 'manager') { %>
-        <!-- MANAGER-ONLY NAV ITEMS -->
+        <span class="nav-divider"></span>
         <a href="/dashboard">Dashboard</a>
         <a href="/participants">Participants</a>
         <a href="/surveys">Survey Results</a>
@@ -26,11 +25,10 @@
         <a href="/donations">Donations</a>
         <a href="/admin/make-manager">Manager Access</a>
       <% } %>
-
     <% } %>
-
   </div>
 
+  <!-- RIGHT: auth actions -->
   <div class="nav-right">
     <% if (currentUser) { %>
       <form action="/logout" method="POST" style="display:inline;">
@@ -42,7 +40,10 @@
       <a href="/signup" class="button-link button-secondary">Sign Up</a>
     <% } %>
   </div>
+
 </nav>
+
+
 
 
 
