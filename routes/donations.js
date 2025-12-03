@@ -9,24 +9,33 @@ const { requireAuth, requireManager } = require('../middleware/auth');
 router.get('/donations', requireManager, async (req, res) => {
   try {
     const donations = await knex('donations as d')
-      .leftJoin('participants as p', 'd.participantemail', 'p.participantemail')
+      .leftJoin('participants as p', function () {
+        // Support either ParticipantEmail or email column naming
+        this.on('d.ParticipantEmail', '=', 'p.ParticipantEmail').orOn(
+          'd.ParticipantEmail',
+          '=',
+          'p.email'
+        );
+      })
       .select(
-        'd.donationid as id',
-        'd.participantemail as email',
-        'd.donationdate as date',
-        'd.donationamount as amount',
-        'p.participantfirstname as first_name',
-        'p.participantlastname as last_name'
+        'd.DonationID as id',
+        'd.ParticipantEmail as email',
+        'd.DonationDate as date',
+        'd.DonationAmount as amount',
+        // Coalesce for schema variations
+        knex.raw(
+          'COALESCE("p"."ParticipantFirstName", "p"."first_name") as first_name'
+        ),
+        knex.raw(
+          'COALESCE("p"."ParticipantLastName", "p"."last_name") as last_name'
+        )
       )
-      .orderBy('d.donationdate', 'desc');
+      .orderBy('d.DonationDate', 'desc');
 
-    res.render('donations/list', {
-      title: 'All Donations',
-      donations
-    });
+    res.render('donations/list', { title: 'Donations', donations });
   } catch (err) {
     console.error('Error loading donations list', err);
-    req.flash('error', 'Could not load donations.');
+    req.flash('error', 'Could not load donations right now.');
     res.redirect('/');
   }
 });
@@ -69,11 +78,11 @@ router.post('/donations', requireManager, async (req, res) => {
 router.get('/donations/:id/edit', requireManager, async (req, res) => {
   try {
     const donation = await knex('donations')
-      .where('donationid', req.params.id)
+      .where('DonationID', req.params.id)
       .first();
 
     if (!donation) {
-      req.flash('error', 'Donation not found.');
+      req.flash('error', 'Donation not found');
       return res.redirect('/donations');
     }
 
@@ -83,7 +92,7 @@ router.get('/donations/:id/edit', requireManager, async (req, res) => {
     });
   } catch (err) {
     console.error('Error loading donation', err);
-    req.flash('error', 'Could not load donation.');
+    req.flash('error', 'Could not load that donation.');
     res.redirect('/donations');
   }
 });
@@ -117,8 +126,8 @@ router.post('/donations/:id', requireManager, async (req, res) => {
 ================================ */
 router.post('/donations/:id/delete', requireManager, async (req, res) => {
   try {
-    await knex('donations').where('donationid', req.params.id).delete();
-    req.flash('success', 'Donation deleted.');
+    await knex('donations').where('DonationID', req.params.id).delete();
+    req.flash('success', 'Donation deleted');
   } catch (err) {
     console.error('Error deleting donation', err);
     req.flash('error', 'Could not delete donation.');
@@ -131,14 +140,27 @@ router.post('/donations/:id/delete', requireManager, async (req, res) => {
 ================================ */
 router.get('/my-donations', requireAuth, async (req, res) => {
   try {
-    const donations = await knex('donations')
-      .where('participantemail', req.session.user.email)
+    const donations = await knex('donations as d')
+      .leftJoin('participants as p', function () {
+        this.on('d.ParticipantEmail', '=', 'p.ParticipantEmail').orOn(
+          'd.ParticipantEmail',
+          '=',
+          'p.email'
+        );
+      })
       .select(
-        'donationid as id',
-        'donationdate as date',
-        'donationamount as amount'
+        'd.DonationID as id',
+        'd.DonationDate as date',
+        'd.DonationAmount as amount',
+        knex.raw(
+          'COALESCE("p"."ParticipantFirstName", "p"."first_name") as first_name'
+        ),
+        knex.raw(
+          'COALESCE("p"."ParticipantLastName", "p"."last_name") as last_name'
+        )
       )
-      .orderBy('donationdate', 'desc');
+      .where('d.ParticipantEmail', req.session.user.email)
+      .orderBy('d.DonationDate', 'desc');
 
     res.render('donations/my-list', {
       title: 'My Donations',

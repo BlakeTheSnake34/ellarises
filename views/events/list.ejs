@@ -18,23 +18,25 @@
 <table border="1" cellpadding="6">
   <tr>
     <th>Name</th>
-    <th>Date</th>
     <th>Type</th>
+    <th>Recurrence</th>
+    <th>Default Capacity</th>
     <th>Description</th>
     <% if (currentUser.role === 'manager') { %><th>Actions</th><% } %>
   </tr>
 
   <% events.forEach(evt => { %>
     <tr>
-      <td><%= evt.name %></td>
-      <td><%= evt.event_date || '' %></td>
-      <td><%= evt.event_type || '' %></td>
-      <td><%= evt.description || '' %></td>
+      <td><%= evt.eventname %></td>
+      <td><%= evt.eventtype || '' %></td>
+      <td><%= evt.eventrecurrencepattern || '' %></td>
+      <td><%= evt.eventdefaultcapacity || '' %></td>
+      <td><%= evt.eventdescription || '' %></td>
 
       <% if (currentUser.role === 'manager') { %>
         <td>
-          <a href="/events/<%= evt.id %>/edit">Edit</a>
-          <form action="/events/<%= evt.id %>/delete" method="POST" style="display:inline;">
+          <a href="/events/<%= evt.eventname %>/edit">Edit</a>
+          <form action="/events/<%= evt.eventname %>/delete" method="POST" style="display:inline;">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button type="submit">Delete</button>
           </form>

@@ -4,7 +4,9 @@ const router = express.Router();
 const knex = require('../db/knex');
 const { requireAuth, requireManager } = require('../middleware/auth');
 
-// List participants for logged in users
+const PAGE_SIZE = 10;
+
+// List participants with search and pagination
 router.get('/participants', requireAuth, async (req, res) => {
   try {
     const participants = await knex('participants')
@@ -37,9 +39,19 @@ router.get('/participants/new', requireManager, (req, res) => {
 
 // Create participant
 router.post('/participants', requireManager, async (req, res) => {
-  const { first_name, last_name, email } = req.body;
-
   try {
+    const {
+      participantemail,
+      participantfirstname,
+      participantlastname,
+      participantdob,
+      participantrole,
+      participantphone,
+      participantschooloremployer,
+      participantfieldofinterest,
+      participantzip
+    } = req.body;
+
     await knex('participants').insert({
       participantfirstname: first_name,
       participantlastname: last_name,
@@ -50,13 +62,13 @@ router.post('/participants', requireManager, async (req, res) => {
     res.redirect('/participants');
 
   } catch (err) {
-    console.error(err);
+    console.error('Create participant error:', err);
     req.flash('error', 'Could not create participant');
     res.redirect('/participants');
   }
 });
 
-// Edit form
+// Edit participant form
 router.get('/participants/:id/edit', requireManager, async (req, res) => {
   try {
     const participant = await knex('participants')
@@ -80,7 +92,7 @@ router.get('/participants/:id/edit', requireManager, async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
+    console.error('Load edit participant error:', err);
     req.flash('error', 'Could not load participant');
     res.redirect('/participants');
   }
@@ -88,9 +100,19 @@ router.get('/participants/:id/edit', requireManager, async (req, res) => {
 
 // Update participant
 router.post('/participants/:id', requireManager, async (req, res) => {
-  const { first_name, last_name, email } = req.body;
-
   try {
+    const {
+      participantemail,
+      participantfirstname,
+      participantlastname,
+      participantdob,
+      participantrole,
+      participantphone,
+      participantschooloremployer,
+      participantfieldofinterest,
+      participantzip
+    } = req.body;
+
     await knex('participants')
       .where({ id: req.params.id })
       .update({
@@ -103,7 +125,7 @@ router.post('/participants/:id', requireManager, async (req, res) => {
     res.redirect('/participants');
 
   } catch (err) {
-    console.error(err);
+    console.error('Update participant error:', err);
     req.flash('error', 'Could not update participant');
     res.redirect('/participants');
   }
@@ -115,7 +137,7 @@ router.post('/participants/:id/delete', requireManager, async (req, res) => {
     await knex('participants').where({ id: req.params.id }).delete();
     req.flash('success', 'Participant deleted');
   } catch (err) {
-    console.error(err);
+    console.error('Delete participant error:', err);
     req.flash('error', 'Could not delete participant');
   }
 
@@ -123,3 +145,10 @@ router.post('/participants/:id/delete', requireManager, async (req, res) => {
 });
 
 module.exports = router;
+
+
+
+
+
+
+
