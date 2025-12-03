@@ -25,7 +25,20 @@ const donationRoutes = require('./routes/donations');
 const app = express();
 
 // Security headers
-app.use(helmet());
+// Security headers with custom CSP allowing our script file
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "script-src": ["'self'"],       // allows /public/js/*
+        "style-src": ["'self'", "'unsafe-inline'"], // allows inline EJS styles
+        "img-src": ["'self'", "data:"],
+      }
+    }
+  })
+);
+
 
 // View engine setup
 app.set('view engine', 'ejs');
