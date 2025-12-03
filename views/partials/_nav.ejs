@@ -16,7 +16,7 @@
       <a href="/my-donations">My Donations</a>
       <a href="/surveys/new">Take Survey</a>
 
-      <% if (currentUser.role === 'manager') { %>
+      <% if (currentUser.level === 'M') { %>
         <span class="nav-divider"></span>
         <a href="/dashboard">Dashboard</a>
         <a href="/participants">Participants</a>
@@ -42,17 +42,3 @@
   </div>
 
 </nav>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
