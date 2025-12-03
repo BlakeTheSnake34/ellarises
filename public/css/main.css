@@ -489,4 +489,15 @@ td.actions form {
 }
 
 
+/* ===========================
+   Wider container for Surveys
+   =========================== */
+.survey-wide {
+  max-width: 1650px !important; 
+}
 
+.survey-wide-page {
+  width: 100%;
+  max-width: 1650px;
+  margin: 0 auto;
+}

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Survey Results</title>
+  <link rel="stylesheet" href="/css/main.css">
+
+  <style>
+    /* Search + Sort layout */
+    .survey-search-bar {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .survey-search-input {
+      flex: 2;
+      height: 45px;
+      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+    }
+    .survey-sort-select {
+      flex: 1;
+      height: 45px;
+      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+    }
+
+    /* Comment buttons */
+    .comment-toggle-btn {
+      background: var(--er-blush);
+      color: var(--er-charcoal);
+      border: none;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    .comment-toggle-btn:hover {
+      background: var(--er-pink);
+    }
+  </style>
+</head>
+
+<body>
+
+<%- include('../partials/_nav') %>
+<%- include('../partials/_flash') %>
+
+<div class="page-wrap survey-wide">
+  <div class="page survey-wide-page">
+
+    <h1>Survey Results</h1>
+
+    <!-- Search + Sort -->
+    <form method="GET" action="/surveys" class="survey-search-bar">
+
+      <input type="text" 
+             name="search"
+             placeholder="Search by name, email, or event..."
+             value="<%= search %>"
+             class="survey-search-input">
+
+      <select name="sort" class="survey-sort-select">
+        <option value="date_desc" <%= sort === "date_desc" ? "selected" : "" %>>Newest First</option>
+        <option value="date_asc"  <%= sort === "date_asc" ? "selected" : "" %>>Oldest First</option>
+        <option value="name_asc"  <%= sort === "name_asc" ? "selected" : "" %>>Name A → Z</option>
+        <option value="name_desc" <%= sort === "name_desc" ? "selected" : "" %>>Name Z → A</option>
+      </select>
+
+      <button type="submit" class="btn-primary">Apply</button>
+    </form>
+
+    <!-- TABLE -->
+    <div style="overflow-x: auto;">
+      <table class="survey-table">
+        <thead>
+          <tr>
+            <th>Participant</th>
+            <th>Email</th>
+            <th>Event</th>
+            <th>Start Time</th>
+            <th>Overall</th>
+            <th>Satisf.</th>
+            <th>Useful.</th>
+            <th>Instr.</th>
+            <th>Recom.</th>
+            <th>NPS</th>
+            <th>Comments</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% surveys.forEach(s => { %>
+            <tr>
+
+              <td>
+                <%= s.participantfirstname %> <%= s.participantlastname %>
+              </td>
+
+              <td><%= s.participantemail %></td>
+
+              <td><%= s.eventname %></td>
+
+              <td>
+                <%= s.eventdatetimestart ? new Date(s.eventdatetimestart).toLocaleString() : "N/A" %>
+              </td>
+
+              <td><%= s.surveyoverallscore %></td>
+              <td><%= s.surveysatisfactionscore %></td>
+              <td><%= s.surveyusefulnessscore %></td>
+              <td><%= s.surveyinstructorscore %></td>
+              <td><%= s.surveyrecommendationscore %></td>
+              <td><%= s.surveynpsbucket %></td>
+
+              <!-- Comments -->
+              <td class="comment-cell">
+
+                <% if (s.surveycomments && s.surveycomments.length > 120) { %>
+
+                  <span class="comment-short"><%= s.surveycomments.slice(0, 120) %>...</span>
+                  <span class="comment-full" style="display:none;"><%= s.surveycomments %></span>
+
+                  <button type="button" class="comment-toggle-btn btn-more">More</button>
+                  <button type="button" class="comment-toggle-btn btn-less" style="display:none;">Less</button>
+
+                <% } else { %>
+                  <%= s.surveycomments || "" %>
+                <% } %>
+
+              </td>
+
+              <td>
+                <%= s.surveysubmissiondate ? new Date(s.surveysubmissiondate).toLocaleString() : "N/A" %>
+              </td>
+
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+
+    <!-- PAGINATION -->
+    <div style="margin-top: 1.5rem;">
+      <% if (currentPage > 1) { %>
+        <a class="btn-edit"
+           href="/surveys?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>">← Prev</a>
+      <% } %>
+
+      <span style="margin: 0 10px;">Page <%= currentPage %> of <%= totalPages %></span>
+
+      <% if (currentPage < totalPages) { %>
+        <a class="btn-edit"
+           href="/surveys?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>">Next →</a>
+      <% } %>
+    </div>
+
+  </div>
+</div>
+
+<!-- 🔥 WORKING EXPAND/COLLAPSE SCRIPT -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".comment-cell").forEach(cell => {
+    const shortEl = cell.querySelector(".comment-short");
+    const fullEl = cell.querySelector(".comment-full");
+    const btnMore = cell.querySelector(".btn-more");
+    const btnLess = cell.querySelector(".btn-less");
+
+    if (!shortEl || !fullEl || !btnMore || !btnLess) return;
+
+    btnMore.addEventListener("click", () => {
+      shortEl.style.display = "none";
+      fullEl.style.display = "inline";
+      btnMore.style.display = "none";
+      btnLess.style.display = "inline";
+    });
+
+    btnLess.addEventListener("click", () => {
+      shortEl.style.display = "inline";
+      fullEl.style.display = "none";
+      btnMore.style.display = "inline";
+      btnLess.style.display = "none";
+    });
+  });
+});
+</script>
+
+</body>
+</html>

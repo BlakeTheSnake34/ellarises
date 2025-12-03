@@ -1,130 +1,67 @@
-// routes/surveys.js
 const express = require('express');
 const router = express.Router();
 const knex = require('../db/knex');
-const { requireAuth, requireManager } = require('../middleware/auth');
+const { requireManager } = require('../middleware/auth');
 
-//
-// MANAGER VIEW: list all survey results
-//
 router.get('/surveys', requireManager, async (req, res) => {
-  const surveys = await knex('surveys as s')
-    .leftJoin('participants as p', 's.participant_id', 'p.id')
-    .leftJoin('events as e', 's.event_id', 'e.id')
-    .select(
-      's.*',
-      knex.raw("concat(p.first_name, ' ', p.last_name) as participant_name"),
-      'e.name as event_name'
-    )
-    .orderBy('s.created_at', 'desc');
+  const { search = "", sort = "newest", page = 1 } = req.query;
 
-  res.render('surveys/list', { title: 'Survey Results (Admin)', surveys });
-});
+  const limit = 50;
+  const currentPage = parseInt(page) || 1;
+  const offset = (currentPage - 1) * limit;
 
-//
-// USER + MANAGER: take a survey (create)
-// We’ll use ?event_id= and ?participant_id= for now.
-//
-router.get('/surveys/new', requireAuth, async (req, res) => {
-  const participants = await knex('participants')
-    .select('id', 'first_name', 'last_name')
-    .orderBy('first_name');
+  try {
+    let baseQuery = knex('surveys as s')
+      .leftJoin('participants as p', 's.participantemail', 'p.participantemail')
+      .select(
+        's.participantemail',
+        'p.participantfirstname as first_name',
+        'p.participantlastname as last_name',
+        's.eventname',
+        's.eventdatetimestart',
+        's.surveysatisfactionscore',
+        's.surveyusefulnessscore',
+        's.surveyinstructorscore',
+        's.surveyrecommendationscore',
+        's.surveyoverallscore',
+        's.surveynpsbucket',
+        's.surveycomments',
+        's.surveysubmissiondate'
+      );
 
-  const events = await knex('events')
-    .select('id', 'name')
-    .orderBy('name');
+    if (search.trim() !== "") {
+      baseQuery.where(function () {
+        this.whereILike('p.participantfirstname', `%${search}%`)
+          .orWhereILike('p.participantlastname', `%${search}%`)
+          .orWhereILike('s.participantemail', `%${search}%`)
+          .orWhereILike('s.eventname', `%${search}%`);
+      });
+    }
 
-  // Optional preselection from query string
-  const survey = {
-    participant_id: req.query.participant_id ? Number(req.query.participant_id) : null,
-    event_id: req.query.event_id ? Number(req.query.event_id) : null
-  };
+    if (sort === "oldest") {
+      baseQuery.orderBy('s.surveysubmissiondate', 'asc');
+    } else {
+      baseQuery.orderBy('s.surveysubmissiondate', 'desc');
+    }
 
-  res.render('surveys/form', {
-    title: 'Post-Event Survey',
-    survey,
-    participants,
-    events
-  });
-});
+    const totalResults = (await baseQuery.clone()).length;
+    const totalPages = Math.ceil(totalResults / limit);
+    const surveys = await baseQuery.clone().limit(limit).offset(offset);
 
-router.post('/surveys', requireAuth, async (req, res) => {
-  const {
-    participant_id,
-    event_id,
-    satisfaction_rating,
-    usefulness_rating,
-    recommend_rating,
-    comments
-  } = req.body;
-
-  await knex('surveys').insert({
-    participant_id,
-    event_id,
-    satisfaction_rating,
-    usefulness_rating,
-    recommend_rating,
-    comments
-  });
-
-  req.flash('success', 'Thank you for your feedback!');
-  res.redirect('/thanks'); // we can make a simple thank-you view or redirect home
-});
-
-//
-// MANAGER: edit / update / delete
-//
-router.get('/surveys/:id/edit', requireManager, async (req, res) => {
-  const survey = await knex('surveys').where({ id: req.params.id }).first();
-
-  if (!survey) {
-    req.flash('error', 'Survey not found');
-    return res.redirect('/surveys');
-  }
-
-  const participants = await knex('participants')
-    .select('id', 'first_name', 'last_name')
-    .orderBy('first_name');
-  const events = await knex('events').select('id', 'name').orderBy('name');
-
-  res.render('surveys/form', {
-    title: 'Edit Survey',
-    survey,
-    participants,
-    events
-  });
-});
-
-router.post('/surveys/:id', requireManager, async (req, res) => {
-  const {
-    participant_id,
-    event_id,
-    satisfaction_rating,
-    usefulness_rating,
-    recommend_rating,
-    comments
-  } = req.body;
-
-  await knex('surveys')
-    .where({ id: req.params.id })
-    .update({
-      participant_id,
-      event_id,
-      satisfaction_rating,
-      usefulness_rating,
-      recommend_rating,
-      comments
+    res.render('surveys/index', {
+      title: 'Survey Results',
+      surveys,
+      search,
+      sort,
+      currentPage,
+      totalPages
     });
 
-  req.flash('success', 'Survey updated');
-  res.redirect('/surveys');
-});
-
-router.post('/surveys/:id/delete', requireManager, async (req, res) => {
-  await knex('surveys').where({ id: req.params.id }).delete();
-  req.flash('success', 'Survey deleted');
-  res.redirect('/surveys');
+  } catch (err) {
+    console.error(err);
+    req.flash('error', 'Could not load surveys.');
+    res.redirect('/');
+  }
 });
 
 module.exports = router;
-

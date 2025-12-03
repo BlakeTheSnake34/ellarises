@@ -17,42 +17,68 @@ router.get('/signup', (req, res) => {
    SIGNUP — Handle Signup Form
 ========================================= */
 router.post('/signup', async (req, res) => {
-  const { email, password, first_name, last_name } = req.body;
+  const {
+    email,
+    password,
+    first_name,
+    last_name,
+    dob,
+    phone,
+    school_or_employer,
+    field_of_interest,
+    zip,
+    role,            // 'U' or 'M'
+    manager_code     // only required if role === 'M'
+  } = req.body;
 
   try {
-    // Check if user already exists
+    // Prevent duplicate accounts
     const existing = await knex('users').where({ email }).first();
     if (existing) {
       req.flash('error', 'Email already exists');
       return res.redirect('/signup');
     }
 
+    // Validate manager accounts
+    if (role === 'M') {
+      if (manager_code !== process.env.MANAGER_SECRET) {
+        req.flash('error', 'Invalid manager access code.');
+        return res.redirect('/signup');
+      }
+    }
+
     // Hash password
     const password_hash = await bcrypt.hash(password, 10);
 
-    // 1️⃣ Create user in users table
+    // 1️⃣ Create user
     const [insertedUser] = await knex('users')
       .insert(
         {
           email,
           password_hash,
-          role: 'U' // U = normal user
+          role: role || 'U'
         },
         ['id']
       );
 
-    // 2️⃣ Create matching participant row
+    // 2️⃣ Create participant record
     await knex('participants').insert({
-      email,
-      first_name: first_name || '',
-      last_name: last_name || ''
+      participantemail: email,
+      participantfirstname: first_name || '',
+      participantlastname: last_name || '',
+      participantdob: dob || null,
+      participantrole: role || 'U',
+      participantphone: phone || '',
+      participantschooloremployer: school_or_employer || '',
+      participantfieldofinterest: field_of_interest || '',
+      participantzip: zip || ''
     });
 
-    // 3️⃣ Log user in
+    // 3️⃣ Auto-login after signup
     req.session.user = {
       id: insertedUser.id,
       email,
-      role: 'U'
+      role: role || 'U'
     };
 
     req.flash('success', 'Account created successfully!');
@@ -86,7 +112,6 @@ router.post('/login', async (req, res) => {
       return res.redirect('/login');
     }
 
-    // Compare passwords
     const match = await bcrypt.compare(password, user.password_hash);
     if (!match) {
       req.flash('error', 'Invalid email or password');

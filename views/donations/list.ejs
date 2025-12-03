@@ -14,49 +14,22 @@
 
       <h1>All Donations</h1>
 
-      <!-- Record Donation Button -->
-      <a href="/donations/new" class="btn-add" style="margin-bottom: 1.2rem; display:inline-block;">
+      <a href="/donations/new" class="btn-add" style="margin-bottom: 1rem; display:inline-block;">
         + Record Donation
       </a>
 
-      <!-- SEARCH + SORT FORM -->
-      <form method="GET" action="/donations"
-        style="
-          margin-bottom: 1.4rem;
-          display: flex;
-          gap: 1rem;
-          align-items: center;
-        "
-      >
+      <!-- SEARCH + SORT BAR -->
+      <form method="GET" action="/donations" class="donation-search-bar">
 
-        <!-- SEARCH -->
         <input 
-          type="text" 
-          name="search" 
-          placeholder="Search by name or email..." 
+          type="text"
+          name="search"
+          placeholder="Search by name or email..."
           value="<%= search %>"
-          style="
-            flex: 2;
-            height: 45px;
-            padding: 0.7rem 1rem;
-            border-radius: 12px;
-            border: 1px solid #ccc;
-            font-size: 1rem;
-          "
+          class="donation-search-input"
         >
 
-        <!-- SORT DROPDOWN -->
-        <select 
-          name="sort"
-          style="
-            flex: 1;
-            height: 45px;
-            padding: 0.6rem 1rem;
-            border-radius: 12px;
-            border: 1px solid #ccc;
-            font-size: 1rem;
-          "
-        >
+        <select name="sort" class="donation-sort-select">
           <option value="date_desc"   <%= sort === "date_desc" ? "selected" : "" %>>Newest First</option>
           <option value="date_asc"    <%= sort === "date_asc" ? "selected" : "" %>>Oldest First</option>
           <option value="amount_desc" <%= sort === "amount_desc" ? "selected" : "" %>>Amount High → Low</option>
@@ -65,11 +38,7 @@
           <option value="name_desc"   <%= sort === "name_desc" ? "selected" : "" %>>Name Z → A</option>
         </select>
 
-        <!-- APPLY BUTTON -->
-        <button type="submit" class="btn-primary" style="height: 45px; padding: 0 1.6rem;">
-          Apply
-        </button>
-
+        <button type="submit" class="btn-primary">Apply</button>
       </form>
 
       <!-- DONATIONS TABLE -->
@@ -89,11 +58,7 @@
             <tr>
               <td><%= d.email %></td>
               <td><%= d.first_name %> <%= d.last_name %></td>
-
-              <td>
-                <%= d.date ? d.date.toISOString().slice(0, 10) : "N/A" %>
-              </td>
-
+              <td><%= d.date ? d.date.toISOString().slice(0, 10) : "N/A" %></td>
               <td>$<%= d.amount %></td>
 
               <td class="actions">
@@ -101,9 +66,14 @@
 
                 <form action="/donations/<%= d.id %>/delete" method="POST" style="display:inline;">
                   <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                  <button type="submit" class="btn-delete" onclick="return confirm('Are you sure?')">
+
+                  <button 
+                    type="button"
+                    class="btn-delete delete-btn"
+                  >
                     Delete
                   </button>
+
                 </form>
               </td>
             </tr>
@@ -111,43 +81,59 @@
         </tbody>
       </table>
 
-      <!-- PAGINATION -->
-      <div style="margin-top: 1.8rem; text-align: right;">
-
-        <% const start = Math.max(1, currentPage - 2); %>
-        <% const end = Math.min(totalPages, currentPage + 2); %>
-
+      <!-- PAGINATION (Compact) -->
+      <div style="margin-top: 1.5rem; text-align: right;">
         <% if (currentPage > 1) { %>
-          <a href="/donations?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>"
-             class="button-link" style="margin-right: 8px;">
+          <a class="btn-edit"
+            href="/donations?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>">
             ← Prev
           </a>
         <% } %>
 
-        <% for (let p = start; p <= end; p++) { %>
-          <a href="/donations?page=<%= p %>&search=<%= search %>&sort=<%= sort %>"
-             class="btn-edit"
-             style="
-               margin: 0 3px;
-               padding: 6px 12px;
-               border-radius: 20px;
-               <%= p === currentPage ? 'background:#7fa0b3; color:white;' : '' %>
-             ">
-            <%= p %>
-          </a>
-        <% } %>
+        <span style="margin: 0 10px; font-weight: 600;">
+          Page <%= currentPage %> of <%= totalPages %>
+        </span>
 
         <% if (currentPage < totalPages) { %>
-          <a href="/donations?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>"
-             class="button-link" style="margin-left: 8px;">
+          <a class="btn-edit"
+            href="/donations?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>">
             Next →
           </a>
         <% } %>
-
       </div>
 
     </div>
   </div>
 
+  <!-- Load Delete Confirmation Script -->
+  <script src="/js/donations.js"></script>
+
 </body>
 </html>
+
+<style>
+.donation-search-bar {
+  margin-bottom: 1rem; 
+  display: flex; 
+  gap: 1rem; 
+  align-items: center;
+}
+
+.donation-search-input {
+  flex: 2;
+  height: 45px;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.donation-sort-select {
+  flex: 1;
+  height: 45px;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+</style>
