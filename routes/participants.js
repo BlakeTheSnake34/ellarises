@@ -2,12 +2,12 @@
 const express = require('express');
 const router = express.Router();
 const knex = require('../db/knex');
-const { requireAuth, requireManager } = require('../middleware/auth');
+const { requireManager } = require('../middleware/auth');
 
 const PAGE_SIZE = 10;
 
-// List participants with search and pagination
-router.get('/participants', requireAuth, async (req, res) => {
+// List participants with search and pagination (MANAGER ONLY)
+router.get('/participants', requireManager, async (req, res) => {
   try {
     const q = (req.query.q || '').trim();
     const pageParam = parseInt(req.query.page, 10);
@@ -50,11 +50,11 @@ router.get('/participants', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('List participants error:', err);
     req.flash('error', 'Could not load participants');
-    res.redirect('/');
+    res.redirect('/home');
   }
 });
 
-// New participant form
+// New participant form (MANAGER ONLY)
 router.get('/participants/new', requireManager, (req, res) => {
   res.render('participants/form', {
     title: 'New Participant',
@@ -62,7 +62,7 @@ router.get('/participants/new', requireManager, (req, res) => {
   });
 });
 
-// Create participant
+// Create participant (MANAGER ONLY)
 router.post('/participants', requireManager, async (req, res) => {
   try {
     const {
@@ -98,7 +98,7 @@ router.post('/participants', requireManager, async (req, res) => {
   }
 });
 
-// Edit participant form
+// Edit participant form (MANAGER ONLY)
 router.get('/participants/:id/edit', requireManager, async (req, res) => {
   try {
     const participant = await knex('participants')
@@ -121,7 +121,7 @@ router.get('/participants/:id/edit', requireManager, async (req, res) => {
   }
 });
 
-// Update participant
+// Update participant (MANAGER ONLY)
 router.post('/participants/:id', requireManager, async (req, res) => {
   try {
     const {
@@ -159,7 +159,7 @@ router.post('/participants/:id', requireManager, async (req, res) => {
   }
 });
 
-// Delete participant
+// Delete participant (MANAGER ONLY)
 router.post('/participants/:id/delete', requireManager, async (req, res) => {
   try {
     await knex('participants')
@@ -176,6 +176,7 @@ router.post('/participants/:id/delete', requireManager, async (req, res) => {
 });
 
 module.exports = router;
+
 
 
 

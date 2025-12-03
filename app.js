@@ -88,6 +88,7 @@ app.use('/', participantRoutes);
 app.use('/', eventRoutes);
 app.use('/', registrationRoutes);
 app.use('/', donationRoutes);
+app.use('/', adminRoutes);          // NEW: /admin/make-manager, manager tools
 
 // SURVEY ROUTES — MUST be mounted ONLY here
 app.use('/surveys', surveyRoutes);

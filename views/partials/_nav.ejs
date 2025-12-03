@@ -21,23 +21,28 @@
 
       <!-- MANAGER ONLY LINKS -->
       <% if (currentUser.role === 'manager') { %>
+        <!-- MANAGER-ONLY NAV ITEMS -->
+        <a href="/dashboard">Dashboard</a>
         <a href="/participants">Participants</a>
         <a href="/surveys">Survey Results</a>
         <a href="/admin/registrations">Registrations</a>
         <a href="/donations">Donations</a>
+        <a href="/admin/make-manager">Manager Access</a>
       <% } %>
 
     <% } %>
+
   </div>
 
   <div class="nav-right">
     <% if (currentUser) { %>
-      <form action="/logout" method="POST">
+      <form action="/logout" method="POST" style="display:inline;">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <button type="submit">Logout</button>
+        <button type="submit" class="button-link">Logout</button>
       </form>
     <% } else { %>
-      <a href="/login">Login</a>
+      <a href="/login" class="button-link">Login</a>
+      <a href="/signup" class="button-link button-secondary">Sign Up</a>
     <% } %>
   </div>
 </nav>
