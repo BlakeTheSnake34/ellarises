@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Take Survey</title>
+  <link rel="stylesheet" href="/css/main.css">
+
+  <style>
+    .survey-form-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .survey-form label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    .survey-form select,
+    .survey-form textarea,
+    .survey-form input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-top: 6px;
+    }
+
+    .survey-form button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 14px;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+<%- include('../partials/_nav') %>
+<%- include('../partials/_flash') %>
+
+<div class="page-wrap">
+  <div class="page survey-form-container">
+
+    <h1>Event Survey</h1>
+
+    <% if (events.length === 0) { %>
+      <p>No events available to review at this time.</p>
+    <% } else { %>
+
+    <form method="POST" action="/surveys" class="survey-form">
+
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <!-- EVENT SELECT -->
+      <label for="eventname">Select Event</label>
+      <select name="eventname" required>
+        <option value="" disabled selected>Select an event...</option>
+        <% events.forEach(e => { %>
+          <option value="<%= e.eventname %>"
+                  data-datetime="<%= e.eventdatetimestart %>">
+            <%= e.eventname %> — <%= new Date(e.eventdatetimestart).toLocaleString() %>
+          </option>
+        <% }) %>
+      </select>
+
+      <!-- Hidden field auto-filled via JS -->
+      <input type="hidden" name="eventdatetimestart" id="eventDateHidden">
+
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const eventSelect = document.querySelector("select[name='eventname']");
+          const hiddenField = document.getElementById("eventDateHidden");
+
+          eventSelect.addEventListener("change", () => {
+            const selected = eventSelect.options[eventSelect.selectedIndex];
+            hiddenField.value = selected.getAttribute("data-datetime");
+          });
+        });
+      </script>
+
+      <!-- SCORES -->
+      <label>Satisfaction (1–5)</label>
+      <input type="number" name="surveysatisfactionscore" min="1" max="5" required>
+
+      <label>Usefulness (1–5)</label>
+      <input type="number" name="surveyusefulnessscore" min="1" max="5" required>
+
+      <label>Instructor Quality (1–5)</label>
+      <input type="number" name="surveyinstructorscore" min="1" max="5" required>
+
+      <label>Recommend (1–5)</label>
+      <input type="number" name="surveyrecommendationscore" min="1" max="5" required>
+
+      <label>Overall (1–10)</label>
+      <input type="number" name="surveyoverallscore" min="1" max="10" required>
+
+      <label>NPS Category</label>
+      <select name="surveynpsbucket" required>
+        <option value="" disabled selected>Select NPS</option>
+        <option value="Promoter">Promoter (9–10)</option>
+        <option value="Passive">Passive (7–8)</option>
+        <option value="Detractor">Detractor (0–6)</option>
+      </select>
+
+      <label>Additional Comments</label>
+      <textarea name="surveycomments" rows="4"></textarea>
+
+      <button class="btn-primary">Submit Survey</button>
+    </form>
+
+    <% } %>
+
+  </div>
+</div>
+
+</body>
+</html>

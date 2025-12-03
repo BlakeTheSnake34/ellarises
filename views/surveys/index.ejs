@@ -5,41 +5,39 @@
   <link rel="stylesheet" href="/css/main.css">
 
   <style>
-    /* Search + Sort layout */
     .survey-search-bar {
       display: flex;
       gap: 1rem;
       align-items: center;
       margin-bottom: 1.5rem;
+      flex-wrap: wrap;
     }
-    .survey-search-input {
-      flex: 2;
-      height: 45px;
-      padding: 0.7rem 1rem;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-    }
-    .survey-sort-select {
+    .survey-input,
+    .survey-select {
       flex: 1;
-      height: 45px;
+      min-width: 220px;
+      height: 48px;
       padding: 0.7rem 1rem;
       border-radius: 12px;
       border: 1px solid #ccc;
+      font-size: 1rem;
     }
-
-    /* Comment buttons */
     .comment-toggle-btn {
-      background: var(--er-blush);
+      background: var(--er-blue);
       color: var(--er-charcoal);
       border: none;
-      padding: 2px 8px;
+      padding: 3px 10px;
       font-size: 0.75rem;
       border-radius: 10px;
       cursor: pointer;
-      margin-left: 5px;
     }
     .comment-toggle-btn:hover {
-      background: var(--er-pink);
+      background: var(--er-blush);
+    }
+    th a {
+      color: var(--er-cream);
+      text-decoration: underline;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -54,19 +52,30 @@
 
     <h1>Survey Results</h1>
 
-    <!-- Search + Sort -->
+    <!-- Search + Filters + Sort -->
     <form method="GET" action="/surveys" class="survey-search-bar">
 
-      <input type="text" 
+      <input type="text"
              name="search"
              placeholder="Search by name, email, or event..."
              value="<%= search %>"
-             class="survey-search-input">
+             class="survey-input">
 
-      <select name="sort" class="survey-sort-select">
+      <select name="event" class="survey-select">
+        <option value="">All Events</option>
+        <% eventsList.forEach(e => { %>
+          <option value="<%= e.eventname %>" <%= event === e.eventname ? "selected" : "" %>>
+            <%= e.eventname %>
+          </option>
+        <% }) %>
+      </select>
+
+      <select name="sort" class="survey-select">
         <option value="date_desc" <%= sort === "date_desc" ? "selected" : "" %>>Newest First</option>
-        <option value="date_asc"  <%= sort === "date_asc" ? "selected" : "" %>>Oldest First</option>
-        <option value="name_asc"  <%= sort === "name_asc" ? "selected" : "" %>>Name A → Z</option>
+        <option value="date_asc"  <%= sort === "date_asc"  ? "selected" : "" %>>Oldest First</option>
+        <option value="event_asc" <%= sort === "event_asc" ? "selected" : "" %>>Event A → Z</option>
+        <option value="event_desc"<%= sort === "event_desc"? "selected" : "" %>>Event Z → A</option>
+        <option value="name_asc"  <%= sort === "name_asc"  ? "selected" : "" %>>Name A → Z</option>
         <option value="name_desc" <%= sort === "name_desc" ? "selected" : "" %>>Name Z → A</option>
       </select>
 
@@ -80,13 +89,63 @@
           <tr>
             <th>Participant</th>
             <th>Email</th>
-            <th>Event</th>
+
+            <!-- EVENT sortable -->
+            <th>
+              <a href="/surveys?<%= `sort=${sort === 'event_asc' ? 'event_desc' : 'event_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
+                Event
+                <% if (sort === 'event_asc') { %> ▲ <% } %>
+                <% if (sort === 'event_desc') { %> ▼ <% } %>
+              </a>
+            </th>
+
             <th>Start Time</th>
-            <th>Overall</th>
-            <th>Satisf.</th>
-            <th>Useful.</th>
-            <th>Instr.</th>
-            <th>Recom.</th>
+
+            <!-- OVERALL -->
+            <th>
+              <a href="/surveys?<%= `sort=${sort === 'overall_asc' ? 'overall_desc' : 'overall_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
+                Overall
+                <% if (sort === 'overall_asc') { %> ▲ <% } %>
+                <% if (sort === 'overall_desc') { %> ▼ <% } %>
+              </a>
+            </th>
+
+            <!-- SATISFACTION -->
+            <th>
+              <a href="/surveys?<%= `sort=${sort === 'satisfaction_asc' ? 'satisfaction_desc' : 'satisfaction_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
+                Satisfaction
+                <% if (sort === 'satisfaction_asc') { %> ▲ <% } %>
+                <% if (sort === 'satisfaction_desc') { %> ▼ <% } %>
+              </a>
+            </th>
+
+            <!-- USEFULNESS -->
+            <th>
+              <a href="/surveys?<%= `sort=${sort === 'usefulness_asc' ? 'usefulness_desc' : 'usefulness_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
+                Usefulness
+                <% if (sort === 'usefulness_asc') { %> ▲ <% } %>
+                <% if (sort === 'usefulness_desc') { %> ▼ <% } %>
+              </a>
+            </th>
+
+            <!-- INSTRUCTOR -->
+            <th>
+              <a href="/surveys?<%= `sort=${sort === 'instructor_asc' ? 'instructor_desc' : 'instructor_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
+                Instructor
+                <% if (sort === 'instructor_asc') { %> ▲ <% } %>
+                <% if (sort === 'instructor_desc') { %> ▼ <% } %>
+              </a>
+            </th>
+
+            <!-- RECOMMEND -->
+            <th>
+              <a href="/surveys?<%= `sort=${sort === 'recommend_asc' ? 'recommend_desc' : 'recommend_asc'}&search=${search}&event=${event}&page=${currentPage}` %>">
+                Recommend
+                <% if (sort === 'recommend_asc') { %> ▲ <% } %>
+                <% if (sort === 'recommend_desc') { %> ▼ <% } %>
+              </a>
+            </th>
+
             <th>NPS</th>
             <th>Comments</th>
             <th>Submitted</th>
@@ -97,17 +156,10 @@
           <% surveys.forEach(s => { %>
             <tr>
 
-              <td>
-                <%= s.participantfirstname %> <%= s.participantlastname %>
-              </td>
-
+              <td><%= s.participantfirstname %> <%= s.participantlastname %></td>
               <td><%= s.participantemail %></td>
-
               <td><%= s.eventname %></td>
-
-              <td>
-                <%= s.eventdatetimestart ? new Date(s.eventdatetimestart).toLocaleString() : "N/A" %>
-              </td>
+              <td><%= s.eventdatetimestart ? new Date(s.eventdatetimestart).toLocaleString() : "N/A" %></td>
 
               <td><%= s.surveyoverallscore %></td>
               <td><%= s.surveysatisfactionscore %></td>
@@ -116,21 +168,17 @@
               <td><%= s.surveyrecommendationscore %></td>
               <td><%= s.surveynpsbucket %></td>
 
-              <!-- Comments -->
               <td class="comment-cell">
-
                 <% if (s.surveycomments && s.surveycomments.length > 120) { %>
 
                   <span class="comment-short"><%= s.surveycomments.slice(0, 120) %>...</span>
                   <span class="comment-full" style="display:none;"><%= s.surveycomments %></span>
-
                   <button type="button" class="comment-toggle-btn btn-more">More</button>
                   <button type="button" class="comment-toggle-btn btn-less" style="display:none;">Less</button>
 
                 <% } else { %>
                   <%= s.surveycomments || "" %>
                 <% } %>
-
               </td>
 
               <td>
@@ -143,52 +191,31 @@
       </table>
     </div>
 
-
     <!-- PAGINATION -->
-    <div style="margin-top: 1.5rem;">
+    <div style="margin-top: 1.5rem; text-align: right;">
       <% if (currentPage > 1) { %>
         <a class="btn-edit"
-           href="/surveys?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>">← Prev</a>
+           href="/surveys?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>&event=<%= event %>">
+          ← Prev
+        </a>
       <% } %>
 
-      <span style="margin: 0 10px;">Page <%= currentPage %> of <%= totalPages %></span>
+      <span style="margin: 0 10px; font-weight: 600;">
+        Page <%= currentPage %> of <%= totalPages %>
+      </span>
 
       <% if (currentPage < totalPages) { %>
         <a class="btn-edit"
-           href="/surveys?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>">Next →</a>
+           href="/surveys?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>&event=<%= event %>">
+          Next → 
+        </a>
       <% } %>
     </div>
 
   </div>
 </div>
 
-<!-- 🔥 WORKING EXPAND/COLLAPSE SCRIPT -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".comment-cell").forEach(cell => {
-    const shortEl = cell.querySelector(".comment-short");
-    const fullEl = cell.querySelector(".comment-full");
-    const btnMore = cell.querySelector(".btn-more");
-    const btnLess = cell.querySelector(".btn-less");
-
-    if (!shortEl || !fullEl || !btnMore || !btnLess) return;
-
-    btnMore.addEventListener("click", () => {
-      shortEl.style.display = "none";
-      fullEl.style.display = "inline";
-      btnMore.style.display = "none";
-      btnLess.style.display = "inline";
-    });
-
-    btnLess.addEventListener("click", () => {
-      shortEl.style.display = "inline";
-      fullEl.style.display = "none";
-      btnMore.style.display = "inline";
-      btnLess.style.display = "none";
-    });
-  });
-});
-</script>
+<script src="/js/survey-comments.js"></script>
 
 </body>
 </html>
