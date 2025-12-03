@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+      <h1><%= title %></h1>
+
+      <%
+        const formatDate = (val) => {
+          if (!val) return '';
+          try {
+            return new Date(val).toISOString().slice(0, 10);
+          } catch (e) {
+            return val;
+          }
+        };
+      %>
+
+      <form action="<%= donation.DonationID ? '/donations/' + donation.DonationID : '/donations' %>" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div class="form-row">
+          <label for="participant_email">Participant Email</label>
+          <input
+            id="participant_email"
+            type="email"
+            name="participant_email"
+            value="<%= donation.ParticipantEmail || '' %>"
+            required
+          >
+        </div>
+
+        <div class="form-row">
+          <label for="donation_date">Donation Date</label>
+          <input
+            id="donation_date"
+            type="date"
+            name="donation_date"
+            value="<%= formatDate(donation.DonationDate) %>"
+            required
+          >
+        </div>
+
+        <div class="form-row">
+          <label for="donation_amount">Donation Amount (USD)</label>
+          <input
+            id="donation_amount"
+            type="number"
+            name="donation_amount"
+            step="0.01"
+            min="0"
+            value="<%= donation.DonationAmount || '' %>"
+            required
+          >
+        </div>
+
+        <button type="submit"><%= donation.DonationID ? 'Update Donation' : 'Create Donation' %></button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>

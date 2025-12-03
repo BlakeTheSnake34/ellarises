@@ -9,12 +9,14 @@
     <% if (currentUser) { %>
       <a href="/dashboard">Dashboard</a>
       <a href="/events">Events</a>
+      <a href="/my-donations">My Donations</a>
       <a href="/surveys/new">Take Survey</a>
 
       <% if (currentUser.role === 'manager') { %>
         <a href="/participants">Participants</a>
         <a href="/surveys">Survey Results</a>
         <a href="/admin/registrations">Registrations</a>
+        <a href="/donations">Donations</a>
       <% } %>
     <% } %>
   </div>

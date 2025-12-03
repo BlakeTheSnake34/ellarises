@@ -19,6 +19,7 @@ const participantRoutes = require('./routes/participants');
 const eventRoutes = require('./routes/events');
 const surveyRoutes = require('./routes/surveys');
 const registrationRoutes = require('./routes/registrations'); // new
+const donationRoutes = require('./routes/donations');
 // later: milestones, donations
 
 const app = express();
@@ -70,6 +71,7 @@ app.use('/', participantRoutes);
 app.use('/', eventRoutes);
 app.use('/', surveyRoutes);
 app.use('/', registrationRoutes);
+app.use('/', donationRoutes);
 
 // IS 404 Requirement: HTTP 418
 app.get('/teapot', (req, res) => {

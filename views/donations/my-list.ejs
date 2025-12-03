@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+      <h1>My Donations</h1>
+
+      <p><a class="button-link" href="/my-donations/new">Make a Donation</a></p>
+
+      <%
+        const formatDate = (val) => {
+          if (!val) return '';
+          try {
+            return new Date(val).toISOString().slice(0, 10);
+          } catch (e) {
+            return val;
+          }
+        };
+      %>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Name on File</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% donations.forEach(d => { %>
+            <tr>
+              <td><%= formatDate(d.date) %></td>
+              <td>$<%= Number(d.amount || 0).toFixed(2) %></td>
+              <td><%= (d.first_name || '') + (d.last_name ? ' ' + d.last_name : '') || '—' %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>
