@@ -1,5 +1,6 @@
 <nav class="er-nav">
   <div class="nav-left">
+
     <!-- Logo + Brand -->
     <a href="/" class="nav-logo">
       <img src="/images/ella-logo.png" class="nav-logo-img" alt="Ella Rises Logo">
@@ -7,17 +8,25 @@
     </a>
 
     <% if (currentUser) { %>
+
+      <!-- Shared pages -->
       <a href="/dashboard">Dashboard</a>
       <a href="/events">Events</a>
       <a href="/my-donations">My Donations</a>
-      <a href="/surveys/new">Take Survey</a>
 
+      <!-- USER ONLY: Take Survey -->
+      <% if (currentUser.role !== 'manager') { %>
+        <a href="/surveys/new">Take Survey</a>
+      <% } %>
+
+      <!-- MANAGER ONLY LINKS -->
       <% if (currentUser.role === 'manager') { %>
         <a href="/participants">Participants</a>
         <a href="/surveys">Survey Results</a>
         <a href="/admin/registrations">Registrations</a>
         <a href="/donations">Donations</a>
       <% } %>
+
     <% } %>
   </div>
 
@@ -32,12 +41,3 @@
     <% } %>
   </div>
 </nav>
-
-
-
-
-
-
-
-
-

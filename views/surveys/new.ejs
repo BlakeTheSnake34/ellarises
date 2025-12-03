@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Take Survey</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+
+      <h1>Take Survey</h1>
+
+      <% if (!events || events.length === 0) { %>
+
+        <p>You do not have any events available to take a survey for.</p>
+        <p class="link-back">
+          <a href="/events">Back to Events</a>
+        </p>
+
+      <% } else { %>
+
+        <form action="/surveys" method="POST">
+
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <!-- Participant -->
+          <div class="form-row">
+            <label>Your Email</label>
+            <input type="email" value="<%= participantEmail %>" disabled>
+            <input type="hidden" name="participantemail" value="<%= participantEmail %>">
+          </div>
+
+          <!-- Event Selection -->
+          <div class="form-row">
+            <label>Select Event</label>
+            <select name="eventname_eventdatetimestart" required>
+              <option value="">Choose an event...</option>
+
+              <% events.forEach(e => { %>
+                <option value="<%= e.eventname %>|<%= e.eventdatetimestart %>">
+                  <%= e.eventname %> — <%= new Date(e.eventdatetimestart).toLocaleString() %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <!-- Ratings -->
+          <div class="form-row">
+            <label>Satisfaction (1–5)</label>
+            <input type="number" name="surveysatisfactionscore" min="1" max="5" required>
+          </div>
+
+          <div class="form-row">
+            <label>Usefulness (1–5)</label>
+            <input type="number" name="surveyusefulnessscore" min="1" max="5" required>
+          </div>
+
+          <div class="form-row">
+            <label>Instructor (1–5)</label>
+            <input type="number" name="surveyinstructorscore" min="1" max="5" required>
+          </div>
+
+          <div class="form-row">
+            <label>Recommend (0–10)</label>
+            <input type="number" name="surveyrecommendationscore" min="0" max="10" required>
+          </div>
+
+          <!-- Comments -->
+          <div class="form-row">
+            <label>Comments</label>
+            <textarea name="surveycomments" rows="4"></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary">Submit Survey</button>
+
+        </form>
+
+      <% } %>
+
+    </div>
+  </div>
+
+</body>
+</html>

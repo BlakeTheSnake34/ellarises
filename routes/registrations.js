@@ -3,44 +3,72 @@ const router = express.Router();
 const knex = require('../db/knex');
 const { requireAuth, requireManager } = require('../middleware/auth');
 
-//
-// USER: register for an event
-//
-router.post('/events/:id/register', requireAuth, async (req, res) => {
-  const eventId = req.params.id;
-  const participantId = req.body.participant_id; // or map from currentUser later
 
-  await knex('event_registrations').insert({
-    participant_id: participantId,
-    event_id: eventId
-  });
+// =========================================================
+// USER — Register for an event
+// =========================================================
+router.post('/events/register', requireAuth, async (req, res) => {
+  const { eventname, eventdatetimestart } = req.body;
 
-  req.flash('success', 'You are registered for this event!');
-  res.redirect('/events');
+  try {
+    await knex('registrations').insert({
+      participantemail: req.session.user.email,
+      eventname: eventname,
+      eventdatetimestart: eventdatetimestart,
+      registrationstatus: 'Registered',
+      registrationcreatedat: knex.fn.now()
+    });
+
+    req.flash('success', 'You are registered for this event!');
+    res.redirect('/events');
+
+  } catch (err) {
+    console.error("REGISTRATION ERROR:", err);
+    req.flash('error', 'Could not register for event.');
+    res.redirect('/events');
+  }
 });
 
-//
-// MANAGER: see who registered for which event
-//
+
+// =========================================================
+// MANAGER — View all registrations
+// =========================================================
 router.get('/admin/registrations', requireManager, async (req, res) => {
-  const rows = await knex('event_registrations as r')
-    .leftJoin('participants as p', 'r.participant_id', 'p.id')
-    .leftJoin('events as e', 'r.event_id', 'e.id')
-    .select(
-      'r.id',
-      'r.registered_at',
-      'p.first_name',
-      'p.last_name',
-      'p.email',
-      'e.name as event_name',
-      'e.event_date'
-    )
-    .orderBy('r.registered_at', 'desc');
+  try {
+    const rows = await knex('registrations as r')
+      .leftJoin('participants as p', 'r.participantemail', 'p.participantemail')
+      .leftJoin('eventoccurances as e', function () {
+        this.on('r.eventname', '=', 'e.eventname')
+            .andOn('r.eventdatetimestart', '=', 'e.eventdatetimestart');
+      })
+      .select(
+        'r.participantemail',
+        'p.participantfirstname',
+        'p.participantlastname',
 
-  res.render('registrations/admin-list', {
-    title: 'Event Registrations',
-    registrations: rows
-  });
+        'r.eventname',
+        'r.eventdatetimestart',
+        'e.eventdatetimeend',
+        'e.eventlocation',
+
+        'r.registrationstatus',
+        'r.registrationattendedflag',
+        'r.registrationcheckintime',
+        'r.registrationcreatedat'
+      )
+      .orderBy('r.registrationcreatedat', 'desc');
+
+    res.render('registrations/admin-list', {
+      title: 'Event Registrations',
+      registrations: rows
+    });
+
+  } catch (err) {
+    console.error("ADMIN REGISTRATION ERROR:", err);
+    req.flash('error', 'Could not load registrations.');
+    res.redirect('/');
+  }
 });
+
 
 module.exports = router;
