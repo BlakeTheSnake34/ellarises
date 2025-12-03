@@ -82,7 +82,7 @@ app.use('/', homeRoutes);          // home screen for logged-in users
 app.use('/', dashboardRoutes);
 app.use('/', participantRoutes);
 app.use('/', eventRoutes);
-app.use('/', surveyRoutes);
+app.use('/surveys', surveyRoutes);
 app.use('/', registrationRoutes);
 app.use('/', donationRoutes);
 
