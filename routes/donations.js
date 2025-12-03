@@ -5,10 +5,17 @@ const { requireAuth, requireManager } = require('../middleware/auth');
 
 /* ================================
    MANAGER — VIEW ALL DONATIONS
+   With search, sorting, pagination
 ================================ */
 router.get('/donations', requireManager, async (req, res) => {
+  const { search = "", sort = "date_desc", page = 1 } = req.query;
+
+  const limit = 50;
+  const currentPage = parseInt(page) || 1;
+  const offset = (currentPage - 1) * limit;
+
   try {
-    const donations = await knex('donations as d')
+    let baseQuery = knex('donations as d')
       .leftJoin('participants as p', 'd.participantemail', 'p.participantemail')
       .select(
         'd.donationid as id',
@@ -17,10 +24,61 @@ router.get('/donations', requireManager, async (req, res) => {
         'd.donationamount as amount',
         'p.participantfirstname as first_name',
         'p.participantlastname as last_name'
-      )
-      .orderBy('d.donationdate', 'desc');
+      );
 
-    res.render('donations/list', { title: 'Donations', donations });
+    // -------------------------------
+    // SEARCH
+    // -------------------------------
+    if (search.trim() !== "") {
+      baseQuery.where(function () {
+        this.whereILike('d.participantemail', `%${search}%`)
+            .orWhereILike('p.participantfirstname', `%${search}%`)
+            .orWhereILike('p.participantlastname', `%${search}%`);
+      });
+    }
+
+    // -------------------------------
+    // SORT OPTIONS
+    // -------------------------------
+    switch (sort) {
+      case "amount_asc":
+        baseQuery.orderBy('d.donationamount', 'asc');
+        break;
+      case "amount_desc":
+        baseQuery.orderBy('d.donationamount', 'desc');
+        break;
+      case "date_asc":
+        baseQuery.orderBy('d.donationdate', 'asc');
+        break;
+      case "name_asc":
+        baseQuery.orderBy('p.participantfirstname', 'asc')
+                 .orderBy('p.participantlastname', 'asc');
+        break;
+      case "name_desc":
+        baseQuery.orderBy('p.participantfirstname', 'desc')
+                 .orderBy('p.participantlastname', 'desc');
+        break;
+      default:
+      case "date_desc":
+        baseQuery.orderBy('d.donationdate', 'desc');
+        break;
+    }
+
+    // Count total BEFORE pagination
+    const totalResults = (await baseQuery.clone()).length;
+    const totalPages = Math.ceil(totalResults / limit);
+
+    // Get paginated results
+    const donations = await baseQuery.clone().limit(limit).offset(offset);
+
+    res.render('donations/list', {
+      title: 'Donations',
+      donations,
+      search,
+      sort,
+      currentPage,
+      totalPages
+    });
 
   } catch (err) {
     console.error('Error loading donations list', err);

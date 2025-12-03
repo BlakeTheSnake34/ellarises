@@ -9,49 +9,145 @@
   <%- include('../partials/_nav') %>
   <%- include('../partials/_flash') %>
 
-  <h1>All Donations</h1>
+  <div class="page-wrap">
+    <div class="page">
 
-  <a href="/donations/new" class="btn">Record New Donation</a>
+      <h1>All Donations</h1>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Donor Email</th>
-        <th>Name</th>
-        <th>Date</th>
-        <th>Amount</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+      <!-- Record Donation Button -->
+      <a href="/donations/new" class="btn-add" style="margin-bottom: 1.2rem; display:inline-block;">
+        + Record Donation
+      </a>
 
-    <tbody>
-      <% donations.forEach(d => { %>
-        <tr>
-          <td><%= d.email %></td>
-          <td><%= d.first_name %> <%= d.last_name %></td>
+      <!-- SEARCH + SORT FORM -->
+      <form method="GET" action="/donations"
+        style="
+          margin-bottom: 1.4rem;
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+        "
+      >
 
-          <td>
-            <%= d.date
-                ? d.date.toISOString().slice(0, 10)
-                : "No Date"
-            %>
-          </td>
+        <!-- SEARCH -->
+        <input 
+          type="text" 
+          name="search" 
+          placeholder="Search by name or email..." 
+          value="<%= search %>"
+          style="
+            flex: 2;
+            height: 45px;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+          "
+        >
 
-          <td>$<%= d.amount %></td>
+        <!-- SORT DROPDOWN -->
+        <select 
+          name="sort"
+          style="
+            flex: 1;
+            height: 45px;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+          "
+        >
+          <option value="date_desc"   <%= sort === "date_desc" ? "selected" : "" %>>Newest First</option>
+          <option value="date_asc"    <%= sort === "date_asc" ? "selected" : "" %>>Oldest First</option>
+          <option value="amount_desc" <%= sort === "amount_desc" ? "selected" : "" %>>Amount High → Low</option>
+          <option value="amount_asc"  <%= sort === "amount_asc" ? "selected" : "" %>>Amount Low → High</option>
+          <option value="name_asc"    <%= sort === "name_asc" ? "selected" : "" %>>Name A → Z</option>
+          <option value="name_desc"   <%= sort === "name_desc" ? "selected" : "" %>>Name Z → A</option>
+        </select>
 
-          <td>
-            <a href="/donations/<%= d.id %>/edit">Edit</a>
+        <!-- APPLY BUTTON -->
+        <button type="submit" class="btn-primary" style="height: 45px; padding: 0 1.6rem;">
+          Apply
+        </button>
 
-            <form action="/donations/<%= d.id %>/delete" method="POST" style="display:inline;">
-              <button type="submit" onclick="return confirm('Are you sure?')">
-                Delete
-              </button>
-            </form>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
+      </form>
+
+      <!-- DONATIONS TABLE -->
+      <table>
+        <thead>
+          <tr>
+            <th>Donor Email</th>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% donations.forEach(d => { %>
+            <tr>
+              <td><%= d.email %></td>
+              <td><%= d.first_name %> <%= d.last_name %></td>
+
+              <td>
+                <%= d.date ? d.date.toISOString().slice(0, 10) : "N/A" %>
+              </td>
+
+              <td>$<%= d.amount %></td>
+
+              <td class="actions">
+                <a href="/donations/<%= d.id %>/edit" class="btn-edit">Edit</a>
+
+                <form action="/donations/<%= d.id %>/delete" method="POST" style="display:inline;">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn-delete" onclick="return confirm('Are you sure?')">
+                    Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <!-- PAGINATION -->
+      <div style="margin-top: 1.8rem; text-align: right;">
+
+        <% const start = Math.max(1, currentPage - 2); %>
+        <% const end = Math.min(totalPages, currentPage + 2); %>
+
+        <% if (currentPage > 1) { %>
+          <a href="/donations?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>"
+             class="button-link" style="margin-right: 8px;">
+            ← Prev
+          </a>
+        <% } %>
+
+        <% for (let p = start; p <= end; p++) { %>
+          <a href="/donations?page=<%= p %>&search=<%= search %>&sort=<%= sort %>"
+             class="btn-edit"
+             style="
+               margin: 0 3px;
+               padding: 6px 12px;
+               border-radius: 20px;
+               <%= p === currentPage ? 'background:#7fa0b3; color:white;' : '' %>
+             ">
+            <%= p %>
+          </a>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+          <a href="/donations?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>"
+             class="button-link" style="margin-left: 8px;">
+            Next →
+          </a>
+        <% } %>
+
+      </div>
+
+    </div>
+  </div>
 
 </body>
 </html>
