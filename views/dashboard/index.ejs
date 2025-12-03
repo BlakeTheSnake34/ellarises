@@ -5,6 +5,14 @@
   <link rel="stylesheet" href="/css/main.css">
 
   <style>
+    /* New wrapper to center and add spacing */
+    .dashboard-wrapper {
+      max-width: 1400px;   /* Shrink slightly */
+      margin: 0 auto;      /* Center horizontally */
+      padding: 24px;       /* ~1 inch padding all around */
+    }
+
+    /* Your existing styles */
     .dashboard-container {
       width: 100%;
       max-width: 1600px;
@@ -14,6 +22,8 @@
     .tableauPlaceholder {
       width: 100%;
       height: 85vh;
+      border-radius: 12px;   /* Optional: rounded corners */
+      overflow: hidden;      /* Prevent scrollbars */
     }
   </style>
 </head>
@@ -24,59 +34,63 @@
 
   <h1>Dashboard</h1>
 
-  <div class="dashboard-container">
+  <!-- ⭐ NEW WRAPPER FOR CLEAN MARGINS & CENTERING -->
+  <div class="dashboard-wrapper">
 
-    <!-- Tableau Embed Code -->
-    <div class='tableauPlaceholder' id='viz1764801900541' style='position: relative'>
-      <noscript>
-        <a href='#'>
-          <img alt='Dashboard Image' src='https://public.tableau.com/static/images/In/IntexDashboard-Group6/Dashboard1/1_rss.png' style='border: none' />
-        </a>
-      </noscript>
+    <div class="dashboard-container">
 
-      <object class='tableauViz' style='display:none;'>
-        <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
-        <param name='embed_code_version' value='3' />
-        <param name='site_root' value='' />
-        <param name='name' value='IntexDashboard-Group6/Dashboard1' />
-        <param name='tabs' value='yes' />
-        <param name='toolbar' value='yes' />
-        <param name='static_image' value='https://public.tableau.com/static/images/In/IntexDashboard-Group6/Dashboard1/1.png' />
-        <param name='animate_transition' value='yes' />
-        <param name='display_static_image' value='yes' />
-        <param name='display_spinner' value='yes' />
-        <param name='display_overlay' value='yes' />
-        <param name='display_count' value='yes' />
-        <param name='language' value='en-US' />
-      </object>
-    </div>
+      <!-- Tableau Embed Code -->
+      <div class='tableauPlaceholder' id='viz1764801900541' style='position: relative'>
+        <noscript>
+          <a href='#'>
+            <img alt='Dashboard Image' src='https://public.tableau.com/static/images/In/IntexDashboard-Group6/Dashboard1/1_rss.png' style='border: none' />
+          </a>
+        </noscript>
 
-    <script type='text/javascript'>
-      var divElement = document.getElementById('viz1764801900541');
-      var vizElement = divElement.getElementsByTagName('object')[0];
+        <object class='tableauViz' style='display:none;'>
+          <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+          <param name='embed_code_version' value='3' />
+          <param name='site_root' value='' />
+          <param name='name' value='IntexDashboard-Group6/Dashboard1' />
+          <param name='tabs' value='yes' />
+          <param name='toolbar' value='yes' />
+          <param name='static_image' value='https://public.tableau.com/static/images/In/IntexDashboard-Group6/Dashboard1/1.png' />
+          <param name='animate_transition' value='yes' />
+          <param name='display_static_image' value='yes' />
+          <param name='display_spinner' value='yes' />
+          <param name='display_overlay' value='yes' />
+          <param name='display_count' value='yes' />
+          <param name='language' value='en-US' />
+        </object>
+      </div>
 
-      if (divElement.offsetWidth > 800) {
-        vizElement.style.minWidth = '1500px';
-        vizElement.style.maxWidth = '100%';
-        vizElement.style.minHeight = '1150px';
-        vizElement.style.maxHeight = (divElement.offsetWidth * 0.75) + 'px';
-      } else if (divElement.offsetWidth > 500) {
-        vizElement.style.minWidth = '1500px';
-        vizElement.style.maxWidth = '100%';
-        vizElement.style.minHeight = '1150px';
-        vizElement.style.maxHeight = (divElement.offsetWidth * 0.75) + 'px';
-      } else {
-        vizElement.style.width = '100%';
-        vizElement.style.minHeight = '2250px';
-        vizElement.style.maxHeight = (divElement.offsetWidth * 1.77) + 'px';
-      }
+      <script type='text/javascript'>
+        var divElement = document.getElementById('viz1764801900541');
+        var vizElement = divElement.getElementsByTagName('object')[0];
 
-      var scriptElement = document.createElement('script');
-      scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
-      vizElement.parentNode.insertBefore(scriptElement, vizElement);
-    </script>
+        if (divElement.offsetWidth > 800) {
+          vizElement.style.minWidth = '1500px';
+          vizElement.style.maxWidth = '100%';
+          vizElement.style.minHeight = '1150px';
+          vizElement.style.maxHeight = (divElement.offsetWidth * 0.75) + 'px';
+        } else if (divElement.offsetWidth > 500) {
+          vizElement.style.minWidth = '1500px';
+          vizElement.style.maxWidth = '100%';
+          vizElement.style.minHeight = '1150px';
+          vizElement.style.maxHeight = (divElement.offsetWidth * 0.75) + 'px';
+        } else {
+          vizElement.style.width = '100%';
+          vizElement.style.minHeight = '2250px';
+          vizElement.style.maxHeight = (divElement.offsetWidth * 1.77) + 'px';
+        }
 
-  </div>
+        var scriptElement = document.createElement('script');
+        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+      </script>
+
+    </div> <!-- end dashboard-container -->
+  </div> <!-- end dashboard-wrapper -->
 
 </body>
 </html>
