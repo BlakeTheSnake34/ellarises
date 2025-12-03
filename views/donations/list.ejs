@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+
+      <h1>All Donations</h1>
+
+      <a href="/donations/new" class="btn-add" style="margin-bottom: 1rem; display:inline-block;">
+        + Record Donation
+      </a>
+
+      <!-- SEARCH + SORT BAR -->
+      <form method="GET" action="/donations" class="donation-search-bar">
+
+        <input 
+          type="text"
+          name="search"
+          placeholder="Search by name or email..."
+          value="<%= search %>"
+          class="donation-search-input"
+        >
+
+        <select name="sort" class="donation-sort-select">
+          <option value="date_desc"   <%= sort === "date_desc" ? "selected" : "" %>>Newest First</option>
+          <option value="date_asc"    <%= sort === "date_asc" ? "selected" : "" %>>Oldest First</option>
+          <option value="amount_desc" <%= sort === "amount_desc" ? "selected" : "" %>>Amount High → Low</option>
+          <option value="amount_asc"  <%= sort === "amount_asc" ? "selected" : "" %>>Amount Low → High</option>
+          <option value="name_asc"    <%= sort === "name_asc" ? "selected" : "" %>>Name A → Z</option>
+          <option value="name_desc"   <%= sort === "name_desc" ? "selected" : "" %>>Name Z → A</option>
+        </select>
+
+        <button type="submit" class="btn-primary">Apply</button>
+      </form>
+
+      <!-- DONATIONS TABLE -->
+      <table>
+        <thead>
+          <tr>
+            <th>Donor Email</th>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% donations.forEach(d => { %>
+            <tr>
+              <td><%= d.email %></td>
+              <td><%= d.first_name %> <%= d.last_name %></td>
+              <td><%= d.date ? d.date.toISOString().slice(0, 10) : "N/A" %></td>
+              <td>$<%= d.amount %></td>
+
+              <td class="actions">
+                <a href="/donations/<%= d.id %>/edit" class="btn-edit">Edit</a>
+
+                <form action="/donations/<%= d.id %>/delete" method="POST" style="display:inline;">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                  <button 
+                    type="button"
+                    class="btn-delete delete-btn"
+                  >
+                    Delete
+                  </button>
+
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <!-- PAGINATION (Compact) -->
+      <div style="margin-top: 1.5rem; text-align: right;">
+        <% if (currentPage > 1) { %>
+          <a class="btn-edit"
+            href="/donations?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>">
+            ← Prev
+          </a>
+        <% } %>
+
+        <span style="margin: 0 10px; font-weight: 600;">
+          Page <%= currentPage %> of <%= totalPages %>
+        </span>
+
+        <% if (currentPage < totalPages) { %>
+          <a class="btn-edit"
+            href="/donations?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>">
+            Next →
+          </a>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Load Delete Confirmation Script -->
+  <script src="/js/donations.js"></script>
+
+</body>
+</html>
+
+<style>
+.donation-search-bar {
+  margin-bottom: 1rem; 
+  display: flex; 
+  gap: 1rem; 
+  align-items: center;
+}
+
+.donation-search-input {
+  flex: 2;
+  height: 45px;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.donation-sort-select {
+  flex: 1;
+  height: 45px;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+</style>

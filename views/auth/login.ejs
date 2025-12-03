@@ -9,19 +9,37 @@
   <%- include('../partials/_nav') %>
   <%- include('../partials/_flash') %>
 
-  <h1>Login</h1>
+  <div class="page-wrap">
+    <div class="page">
 
-  <form action="/login" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <h1>Login</h1>
 
-    <label>Email</label><br>
-    <input type="email" name="email" required><br><br>
+      <form action="/login" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-    <label>Password</label><br>
-    <input type="password" name="password" required><br><br>
+        <div class="form-row">
+          <label>Email</label>
+          <input type="email" name="email" required>
+        </div>
 
-    <button type="submit">Log In</button>
-  </form>
+        <div class="form-row">
+          <label>Password</label>
+          <input type="password" name="password" required>
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 1.25rem;">
+          Log In
+        </button>
+      </form>
+
+      <p style="margin-top: 1rem;">
+        Don’t have an account?
+        <a href="/signup" class="link-back">Sign up here</a>
+      </p>
+
+    </div>
+  </div>
 
 </body>
 </html>
+

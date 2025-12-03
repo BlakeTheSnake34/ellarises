@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+      <h1>Create an Account</h1>
+
+      <form action="/signup" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <!-- Force user role to "U" -->
+        <input type="hidden" name="role" value="U">
+
+        <!-- ============================
+             USER ACCOUNT FIELDS
+        ============================= -->
+
+        <div class="form-row">
+          <label>Email</label>
+          <input type="email" name="email" required>
+        </div>
+
+        <div class="form-row">
+          <label>Password</label>
+          <input type="password" name="password" required>
+        </div>
+
+        <!-- ============================
+             PARTICIPANT INFO FIELDS
+        ============================= -->
+
+        <h2>Your Information</h2>
+
+        <div class="form-row">
+          <label>First Name</label>
+          <input type="text" name="first_name" required>
+        </div>
+
+        <div class="form-row">
+          <label>Last Name</label>
+          <input type="text" name="last_name" required>
+        </div>
+
+        <div class="form-row">
+          <label>Date of Birth</label>
+          <input type="date" name="dob">
+        </div>
+
+        <div class="form-row">
+          <label>Phone Number</label>
+          <input type="text" name="phone">
+        </div>
+
+        <div class="form-row">
+          <label>School or Employer</label>
+          <input type="text" name="school_or_employer">
+        </div>
+
+        <div class="form-row">
+          <label>Field of Interest</label>
+          <input type="text" name="field_of_interest">
+        </div>
+
+        <div class="form-row">
+          <label>ZIP Code</label>
+          <input type="text" name="zip">
+        </div>
+
+        <!-- ============================
+             SUBMIT BUTTON
+        ============================= -->
+
+        <button type="submit" class="btn-primary" style="margin-top: 1.5rem;">
+          Create Account
+        </button>
+      </form>
+
+      <p style="margin-top: 1rem;">
+        Already have an account?
+        <a href="/login" class="link-back">Login here</a>
+      </p>
+
+    </div>
+  </div>
+
+</body>
+</html>
+
+

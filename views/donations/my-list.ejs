@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+      <h1>My Donations</h1>
+
+      <a href="/my-donations/new" class="btn-add" style="margin-bottom:1rem; display:inline-block;">
+        + Make Donation
+      </a>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% donations.forEach(d => { %>
+            <tr>
+              <td>
+                <%= d.date ? d.date.toISOString().slice(0, 10) : "N/A" %>
+              </td>
+
+              <td>$<%= d.amount %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</body>
+</html>

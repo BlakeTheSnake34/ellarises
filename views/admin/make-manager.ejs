@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+      <h1>Manager Access</h1>
+
+      <!-- Promote to manager -->
+      <section style="margin-bottom: 2rem;">
+        <h2>Invite or Promote Manager</h2>
+        <p>Enter the email of an existing user you want to grant manager access to.</p>
+
+        <form action="/admin/make-manager" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <div class="form-row">
+            <label>Email</label>
+            <input type="email" name="email" required>
+          </div>
+
+          <button type="submit" class="btn-primary" style="margin-top: 1.25rem;">
+            Make Manager
+          </button>
+        </form>
+      </section>
+
+      <!-- Demote manager back to user -->
+      <section style="margin-top: 2rem;">
+        <h2>Remove Manager Access</h2>
+        <p>Enter the email of a manager you want to change back to a regular user.</p>
+
+        <form action="/admin/remove-manager" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <div class="form-row">
+            <label>Email</label>
+            <input type="email" name="email" required>
+          </div>
+
+          <button type="submit" class="btn-primary button-secondary" style="margin-top: 1.25rem;">
+            Remove Manager
+          </button>
+        </form>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
+

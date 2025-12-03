@@ -13,18 +13,30 @@ const { injectUser } = require('./middleware/auth');
 // Route imports
 const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
-const homeRoutes = require('./routes/home');           // new
+const homeRoutes = require('./routes/home');
 const dashboardRoutes = require('./routes/dashboard');
 const participantRoutes = require('./routes/participants');
 const eventRoutes = require('./routes/events');
 const surveyRoutes = require('./routes/surveys');
-const registrationRoutes = require('./routes/registrations'); // new
-// later: milestones, donations
+const registrationRoutes = require('./routes/registrations');
+const donationRoutes = require('./routes/donations');
+const adminRoutes = require('./routes/admin');        // NEW: manager tools (make manager)
 
 const app = express();
 
-// Security headers
-app.use(helmet());
+// Security headers with custom CSP allowing our script file
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "script-src": ["'self'"],       // allows /public/js/*
+        "style-src": ["'self'", "'unsafe-inline'"], // allows inline EJS styles
+        "img-src": ["'self'", "data:"],
+      }
+    }
+  })
+);
 
 // View engine setup
 app.set('view engine', 'ejs');
@@ -64,12 +76,14 @@ app.use(injectUser);
 // Routes
 app.use('/', publicRoutes);
 app.use('/', authRoutes);
-app.use('/', homeRoutes);          // home screen for logged-in users
+app.use('/', homeRoutes);           // home screen for logged-in users
 app.use('/', dashboardRoutes);
 app.use('/', participantRoutes);
 app.use('/', eventRoutes);
-app.use('/', surveyRoutes);
+app.use('/', surveyRoutes);         // FIX: mount at root so /surveys works
 app.use('/', registrationRoutes);
+app.use('/', donationRoutes);
+app.use('/', adminRoutes);          // NEW: /admin/make-manager, manager tools
 
 // IS 404 Requirement: HTTP 418
 app.get('/teapot', (req, res) => {
@@ -97,6 +111,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Ella Rises app running at http://localhost:${PORT}`);
 });
+
 
 
 

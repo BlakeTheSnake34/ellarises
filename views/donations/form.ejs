@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <h1><%= title %></h1>
+
+  <form action="<%= donation.donationid ? '/donations/' + donation.donationid : '/donations' %>" method="POST">
+
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <label>Participant Email</label>
+    <input type="email" name="participant_email" required
+           value="<%= donation.participantemail || '' %>">
+
+    <label>Donation Date</label>
+    <input type="date" name="donation_date" required
+           value="<%= donation.donationdate ? donation.donationdate.toISOString().slice(0,10) : '' %>">
+
+    <label>Donation Amount ($)</label>
+    <input type="number" name="donation_amount" required step="0.01"
+           value="<%= donation.donationamount || '' %>">
+
+    <button type="submit" class="btn">Save Donation</button>
+
+  </form>
+
+</body>
+</html>
