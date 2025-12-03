@@ -9,52 +9,27 @@ const PAGE_SIZE = 10;
 // List participants with search and pagination
 router.get('/participants', requireAuth, async (req, res) => {
   try {
-    const q = (req.query.q || '').trim();
-    const pageParam = parseInt(req.query.page, 10);
-    const currentPage = Number.isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
-
-    const baseQuery = knex('participants');
-    const countQuery = knex('participants');
-
-    if (q) {
-      const searchTerm = `%${q}%`;
-      const applySearch = builder => {
-        builder
-          .where('participantfirstname', 'ilike', searchTerm)
-          .orWhere('participantlastname', 'ilike', searchTerm)
-          .orWhere('participantemail', 'ilike', searchTerm);
-      };
-      baseQuery.where(applySearch);
-      countQuery.where(applySearch);
-    }
-
-    const [{ count }] = await countQuery.clone().count({ count: '*' });
-    const totalCount = parseInt(count, 10) || 0;
-    const totalPages = totalCount > 0 ? Math.ceil(totalCount / PAGE_SIZE) : 1;
-    const safePage = currentPage > totalPages ? totalPages : currentPage;
-    const offset = (safePage - 1) * PAGE_SIZE;
-
-    const participants = await baseQuery
-      .select('*')
-      .orderBy('participantlastname', 'asc')
-      .limit(PAGE_SIZE)
-      .offset(offset);
+    const participants = await knex('participants')
+      .select(
+        'id',
+        'participantfirstname as first_name',
+        'participantlastname as last_name',
+        'participantemail as email'
+      );
 
     res.render('participants/list', {
       title: 'Participants',
-      participants,
-      q,
-      currentPage: safePage,
-      totalPages
+      participants
     });
+
   } catch (err) {
-    console.error('List participants error:', err);
+    console.error("Error loading participants:", err);
     req.flash('error', 'Could not load participants');
     res.redirect('/');
   }
 });
 
-// New participant form
+// New participant form (Manager only)
 router.get('/participants/new', requireManager, (req, res) => {
   res.render('participants/form', {
     title: 'New Participant',
@@ -78,19 +53,14 @@ router.post('/participants', requireManager, async (req, res) => {
     } = req.body;
 
     await knex('participants').insert({
-      participantemail,
-      participantfirstname,
-      participantlastname,
-      participantdob: participantdob || null,
-      participantrole: participantrole || null,
-      participantphone: participantphone || null,
-      participantschooloremployer: participantschooloremployer || null,
-      participantfieldofinterest: participantfieldofinterest || null,
-      participantzip: participantzip || null
+      participantfirstname: first_name,
+      participantlastname: last_name,
+      participantemail: email
     });
 
     req.flash('success', 'Participant created');
     res.redirect('/participants');
+
   } catch (err) {
     console.error('Create participant error:', err);
     req.flash('error', 'Could not create participant');
@@ -103,6 +73,12 @@ router.get('/participants/:id/edit', requireManager, async (req, res) => {
   try {
     const participant = await knex('participants')
       .where({ id: req.params.id })
+      .select(
+        'id',
+        'participantfirstname as first_name',
+        'participantlastname as last_name',
+        'participantemail as email'
+      )
       .first();
 
     if (!participant) {
@@ -114,6 +90,7 @@ router.get('/participants/:id/edit', requireManager, async (req, res) => {
       title: 'Edit Participant',
       participant
     });
+
   } catch (err) {
     console.error('Load edit participant error:', err);
     req.flash('error', 'Could not load participant');
@@ -139,19 +116,14 @@ router.post('/participants/:id', requireManager, async (req, res) => {
     await knex('participants')
       .where({ id: req.params.id })
       .update({
-        participantemail,
-        participantfirstname,
-        participantlastname,
-        participantdob: participantdob || null,
-        participantrole: participantrole || null,
-        participantphone: participantphone || null,
-        participantschooloremployer: participantschooloremployer || null,
-        participantfieldofinterest: participantfieldofinterest || null,
-        participantzip: participantzip || null
+        participantfirstname: first_name,
+        participantlastname: last_name,
+        participantemail: email
       });
 
     req.flash('success', 'Participant updated');
     res.redirect('/participants');
+
   } catch (err) {
     console.error('Update participant error:', err);
     req.flash('error', 'Could not update participant');
@@ -162,17 +134,14 @@ router.post('/participants/:id', requireManager, async (req, res) => {
 // Delete participant
 router.post('/participants/:id/delete', requireManager, async (req, res) => {
   try {
-    await knex('participants')
-      .where({ id: req.params.id })
-      .delete();
-
+    await knex('participants').where({ id: req.params.id }).delete();
     req.flash('success', 'Participant deleted');
-    res.redirect('/participants');
   } catch (err) {
     console.error('Delete participant error:', err);
     req.flash('error', 'Could not delete participant');
-    res.redirect('/participants');
   }
+
+  res.redirect('/participants');
 });
 
 module.exports = router;
