@@ -25,7 +25,7 @@
    Reset and base
    ============== */
 
-* ,
+*,
 *::before,
 *::after {
   box-sizing: border-box;
@@ -131,7 +131,7 @@ h2 {
 }
 
 .nav-logo-img {
-  height: 48px;         /* bigger logo in nav */
+  height: 48px;
   width: 48px;
   border-radius: 50%;
   object-fit: contain;
@@ -207,6 +207,78 @@ input[type="submit"]:hover {
 
 .button-secondary:hover {
   background: #7c9d80;
+}
+
+/* Participants page specific buttons */
+
+.btn-add {
+  display: inline-block;
+  background-color: var(--er-accent);
+  color: var(--er-charcoal);
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn-add:hover {
+  background-color: #7c9d80;
+}
+
+.btn-edit {
+  display: inline-block;
+  background-color: var(--er-blue);
+  color: var(--er-charcoal);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  text-decoration: none;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.btn-edit:hover {
+  background-color: #7fa0b3;
+}
+
+.btn-delete {
+  background-color: var(--er-primary);
+  color: #ffffff;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.btn-delete:hover {
+  background-color: #b22347;
+}
+
+.btn-primary {
+  background-color: var(--er-primary);
+  color: #ffffff;
+  padding: 0.6rem 1.3rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: #b22347;
+}
+
+.link-back {
+  text-decoration: underline;
+  color: var(--er-blue);
+  font-size: 0.9rem;
+}
+
+.link-back:hover {
+  color: var(--er-lilac);
 }
 
 /* ======
@@ -290,7 +362,10 @@ tbody tr:hover {
   background-color: var(--er-blush);
 }
 
-td.actions {
+/* actions cell for participants table */
+
+td.actions,
+.action-cell {
   white-space: nowrap;
 }
 
@@ -341,7 +416,7 @@ td.actions form {
 }
 
 .hero-logo {
-  width: 230px;           /* bigger hero logo */
+  width: 230px;
   max-width: 90%;
   border-radius: 50%;
   display: block;

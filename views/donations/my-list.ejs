@@ -16,7 +16,7 @@
       <p><a class="button-link" href="/my-donations/new">Make a Donation</a></p>
 
       <%
-        const formatDate = (val) => {
+        const formatDate = (val) => { 
           if (!val) return '';
           try {
             return new Date(val).toISOString().slice(0, 10);

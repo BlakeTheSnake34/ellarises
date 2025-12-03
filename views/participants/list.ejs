@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Participants</title>
+  <title><%= title %></title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -9,40 +9,136 @@
   <%- include('../partials/_nav') %>
   <%- include('../partials/_flash') %>
 
-  <h1>Participants</h1>
+  <div class="page-wrap">
+    <div class="page">
+      <h1><%= title %></h1>
 
-  <% if (currentUser.role === 'manager') { %>
-    <a href="/participants/new">Add Participant</a>
-  <% } %>
+      <!-- Search bar -->
+      <form method="GET" action="/participants" class="form-row" style="margin-bottom: 1rem;">
+        <input
+          type="text"
+          name="q"
+          placeholder="Search by name or email"
+          value="<%= q || '' %>"
+          style="max-width: 260px;"
+        >
+        <button type="submit" class="button-secondary">Search</button>
 
-  <table border="1" cellpadding="6" cellspacing="0">
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <% if (currentUser.role === 'manager') { %>
-        <th>Actions</th>
-      <% } %>
-    </tr>
-
-    <% participants.forEach(p => { %>
-      <tr>
-        <td><%= p.first_name %> <%= p.last_name %></td>
-        <td><%= p.email %></td>
-
-        <% if (currentUser.role === 'manager') { %>
-          <td>
-            <a href="/participants/<%= p.id %>/edit">Edit</a>
-
-            <form action="/participants/<%= p.id %>/delete" method="POST" style="display:inline;">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <button type="submit">Delete</button>
-            </form>
-          </td>
+        <% if (q) { %>
+          <a href="/participants" class="button-secondary" style="margin-left: 0.5rem;">Clear</a>
         <% } %>
+      </form>
 
-      </tr>
-    <% }) %>
-  </table>
+      <p>
+        <a href="/participants/new" class="btn-add">+ Add Participant</a>
+      </p>
+
+      <table class="participants-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>DOB</th>
+            <th>Phone</th>
+            <th>School or Employer</th>
+            <th>Field of Interest</th>
+            <th>Zip</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% if (participants && participants.length) { %>
+            <% participants.forEach(p => { %>
+              <tr>
+                <td><%= p.participantemail %></td>
+                <td><%= p.participantfirstname %></td>
+                <td><%= p.participantlastname %></td>
+                <td><%= p.participantdob ? String(p.participantdob).slice(0, 10) : '' %></td>
+                <td><%= p.participantphone %></td>
+                <td><%= p.participantschooloremployer %></td>
+                <td><%= p.participantfieldofinterest %></td>
+                <td><%= p.participantzip %></td>
+
+                <td class="action-cell">
+                  <a href="/participants/<%= p.id %>/edit" class="btn-edit">Edit</a>
+
+                  <form action="/participants/<%= p.id %>/delete"
+                        method="POST"
+                        style="display:inline;">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-delete">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="9">No participants found.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+
+      <!-- Pagination controls -->
+      <% if (totalPages && totalPages > 1) { %>
+        <div class="pagination" style="margin-top: 1rem;">
+          <!-- Previous -->
+          <% if (currentPage > 1) { %>
+            <a
+              href="/participants?page=<%= currentPage - 1 %><%= q ? '&q=' + q : '' %>"
+              class="button-secondary"
+            >
+              Previous
+            </a>
+          <% } else { %>
+            <span class="button-secondary" style="opacity: 0.5; pointer-events: none;">Previous</span>
+          <% } %>
+
+          <!-- Page numbers -->
+          <% for (let p = 1; p <= totalPages; p++) { %>
+            <% if (p === currentPage) { %>
+              <span class="button-secondary" style="margin: 0 0.25rem; font-weight: 700;">
+                <%= p %>
+              </span>
+            <% } else { %>
+              <a
+                href="/participants?page=<%= p %><%= q ? '&q=' + q : '' %>"
+                class="button-secondary"
+                style="margin: 0 0.25rem;"
+              >
+                <%= p %>
+              </a>
+            <% } %>
+          <% } %>
+
+          <!-- Next -->
+          <% if (currentPage < totalPages) { %>
+            <a
+              href="/participants?page=<%= currentPage + 1 %><%= q ? '&q=' + q : '' %>"
+              class="button-secondary"
+            >
+              Next
+            </a>
+          <% } else { %>
+            <span class="button-secondary" style="opacity: 0.5; pointer-events: none;">Next</span>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </div>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+

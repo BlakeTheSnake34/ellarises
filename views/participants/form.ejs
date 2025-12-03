@@ -9,41 +9,118 @@
   <%- include('../partials/_nav') %>
   <%- include('../partials/_flash') %>
 
-  <h1><%= title %></h1>
+  <div class="page-wrap">
+    <div class="page">
+      <h1><%= title %></h1>
 
-  <form action="<%= participant.id ? '/participants/' + participant.id : '/participants' %>" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <form action="<%= participant && participant.id
+                       ? '/participants/' + participant.id
+                       : '/participants' %>"
+            method="POST">
 
-    <label>First Name</label><br>
-    <input
-      type="text"
-      name="first_name"
-      value="<%= participant.first_name || '' %>"
-      required
-    ><br><br>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-    <label>Last Name</label><br>
-    <input
-      type="text"
-      name="last_name"
-      value="<%= participant.last_name || '' %>"
-      required
-    ><br><br>
+        <div class="form-row">
+          <label>Email</label>
+          <input
+            type="email"
+            name="participantemail"
+            value="<%= participant.participantemail || '' %>"
+            required
+          >
+        </div>
 
-    <label>Email</label><br>
-    <input
-      type="email"
-      name="email"
-      value="<%= participant.email || '' %>"
-    ><br><br>
+        <div class="form-row">
+          <label>First Name</label>
+          <input
+            type="text"
+            name="participantfirstname"
+            value="<%= participant.participantfirstname || '' %>"
+            required
+          >
+        </div>
 
-    <% if (participant.id) { %>
-      <button type="submit">Update Participant</button>
-    <% } else { %>
-      <button type="submit">Create Participant</button>
-    <% } %>
-  </form>
+        <div class="form-row">
+          <label>Last Name</label>
+          <input
+            type="text"
+            name="participantlastname"
+            value="<%= participant.participantlastname || '' %>"
+            required
+          >
+        </div>
+
+        <div class="form-row">
+          <label>Date of Birth</label>
+          <input
+            type="date"
+            name="participantdob"
+            value="<%= participant.participantdob ? String(participant.participantdob).slice(0,10) : '' %>"
+          >
+        </div>
+
+        <div class="form-row">
+          <label>Role</label>
+          <input
+            type="text"
+            name="participantrole"
+            value="<%= participant.participantrole || '' %>"
+          >
+        </div>
+
+        <div class="form-row">
+          <label>Phone</label>
+          <input
+            type="text"
+            name="participantphone"
+            value="<%= participant.participantphone || '' %>"
+          >
+        </div>
+
+        <div class="form-row">
+          <label>School or Employer</label>
+          <input
+            type="text"
+            name="participantschooloremployer"
+            value="<%= participant.participantschooloremployer || '' %>"
+          >
+        </div>
+
+        <div class="form-row">
+          <label>Field of Interest</label>
+          <input
+            type="text"
+            name="participantfieldofinterest"
+            value="<%= participant.participantfieldofinterest || '' %>"
+          >
+        </div>
+
+        <div class="form-row">
+          <label>Zip Code</label>
+          <input
+            type="text"
+            name="participantzip"
+            value="<%= participant.participantzip || '' %>"
+          >
+        </div>
+
+        <% if (participant && participant.id) { %>
+          <button type="submit" class="btn-primary">Update Participant</button>
+        <% } else { %>
+          <button type="submit" class="btn-primary">Create Participant</button>
+        <% } %>
+      </form>
+
+      <p>
+        <a href="/participants" class="link-back">Back to list</a>
+      </p>
+    </div>
+  </div>
 
 </body>
 </html>
+
+
+
+
 
