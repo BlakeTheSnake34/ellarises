@@ -81,31 +81,45 @@
         </tbody>
       </table>
 
-      <!-- PAGINATION (Compact) -->
-      <div style="margin-top: 1.5rem; text-align: right;">
+      <!-- PAGINATION WITH PAGE JUMP -->
+      <div style="margin-top:1.5rem; text-align:right; display:flex; justify-content:flex-end; gap:1rem; align-items:center;">
+
         <% if (currentPage > 1) { %>
-          <a class="btn-edit"
-            href="/donations?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>">
-            ← Prev
-          </a>
+        <a class="btn-edit"
+           href="/donations?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>">← Prev</a>
         <% } %>
 
-        <span style="margin: 0 10px; font-weight: 600;">
-          Page <%= currentPage %> of <%= totalPages %>
-        </span>
+        <form method="GET" action="/donations" style="display:flex; gap:.4rem; align-items:center;">
+          <span>Page</span>
+
+          <input 
+            type="number" 
+            name="page" 
+            value="<%= currentPage %>" 
+            min="1" 
+            max="<%= totalPages %>"
+            style="width:65px; padding:.3rem .5rem; border-radius:8px;"
+          >
+
+          <span>of <%= totalPages %></span>
+
+          <!-- KEEP SEARCH + SORT -->
+          <input type="hidden" name="search" value="<%= search %>">
+          <input type="hidden" name="sort"   value="<%= sort %>">
+
+          <button class="btn-edit" type="submit">Go</button>
+        </form>
 
         <% if (currentPage < totalPages) { %>
-          <a class="btn-edit"
-            href="/donations?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>">
-            Next →
-          </a>
+        <a class="btn-edit"
+           href="/donations?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>">Next →</a>
         <% } %>
+
       </div>
 
     </div>
   </div>
 
-  <!-- Load Delete Confirmation Script -->
   <script src="/js/donations.js"></script>
 
 </body>
