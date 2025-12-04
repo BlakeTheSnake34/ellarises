@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title><%= title || 'Participant Milestones – Ella Rises' %></title>
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+      <h1>
+        Milestones for
+        <%= participant.first_name %> <%= participant.last_name %>
+      </h1>
+
+      <p>Email: <strong><%= participant.email %></strong></p>
+
+      <p>
+        This page shows all long-term milestones recorded for this participant,
+        such as degrees, certificates, internships, competitions, and other
+        important achievements.
+      </p>
+
+      <h2>Milestone History</h2>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Milestone Title</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (!milestones || milestones.length === 0) { %>
+            <tr>
+              <td colspan="2">No milestones recorded yet for this participant.</td>
+            </tr>
+          <% } else { %>
+            <% milestones.forEach(m => { %>
+              <tr>
+                <td><%= m.milestonetitle %></td>
+                <td><%= m.milestonedate || '—' %></td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+
+      <p>
+        <a href="/milestones">&larr; Back to all participant milestones</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
