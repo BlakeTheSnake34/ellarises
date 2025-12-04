@@ -400,7 +400,7 @@ tbody tr:hover {
   background-color: var(--er-blush);
 }
 
-/* actions cell for participants table */
+/* actions cell */
 
 td.actions,
 .action-cell {
@@ -704,14 +704,56 @@ td.actions form {
   }
 }
 
-
 /* Modal scroll fix */
+
 .er-modal-box::-webkit-scrollbar {
   width: 8px;
 }
+
 .er-modal-box::-webkit-scrollbar-thumb {
   background: var(--er-blue);
   border-radius: 4px;
 }
+
+/* Milestones table shell */
+.table-shell {
+  margin-top: 0.75rem;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.03);
+  overflow: hidden;              /* keeps the dark header inside rounded corners */
+}
+
+/* inner area can scroll horizontally if needed */
+.table-shell-inner {
+  overflow-x: auto;
+}
+
+/* table inside the shell: no extra top margin, slight min width for breathing room */
+.table-shell-inner .data-table {
+  margin-top: 0;
+  min-width: 1050px;            /* gives columns space, creates a subtle inner scroll on small screens */
+}
+
+/* slightly tighter cell padding so the row height feels balanced */
+.data-table th,
+.data-table td {
+  padding: 0.55rem 0.7rem;
+}
+
+/* right align numeric columns so the zeros line up */
+.data-table th.numeric,
+.data-table td.numeric {
+  text-align: right;
+}
+
+/* center the action column */
+.data-table .action-cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+
+
 
 

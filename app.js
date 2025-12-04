@@ -32,39 +32,39 @@ app.use(
     contentSecurityPolicy: {
       useDefaults: true,
       directives: {
-        "default-src": ["'self'"],
+        defaultSrc: ["'self'"],
 
         // Allow Tableau scripts
-        "script-src": [
+        scriptSrc: [
           "'self'",
           "'unsafe-inline'",
           "https://public.tableau.com",
           "https://public.tableau.com/javascripts/api/"
         ],
 
-        // Allow Google Fonts + inline styles + Tableau styles
-        "style-src": [
+        // Allow Google Fonts and inline styles
+        styleSrc: [
           "'self'",
           "'unsafe-inline'",
           "https://fonts.googleapis.com"
         ],
 
-        // Allow Google Fonts host + Tableau font loading
-        "font-src": [
+        // Allow Google Fonts host
+        fontSrc: [
           "'self'",
           "https://fonts.gstatic.com",
           "data:"
         ],
 
-        // Allow Tableau images + embedded content
-        "img-src": [
+        // Allow Tableau images and embedded content
+        imgSrc: [
           "'self'",
           "data:",
           "https://public.tableau.com"
         ],
 
         // Allow Tableau iframe embeds
-        "frame-src": [
+        frameSrc: [
           "'self'",
           "https://public.tableau.com"
         ]
@@ -90,7 +90,7 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET || 'dev-secret-key',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: false
   })
 );
 
@@ -114,7 +114,7 @@ app.use(injectUser);
 app.use('/', publicRoutes);
 app.use('/', authRoutes);
 
-// Logged-in pages
+// Logged in pages
 app.use('/', homeRoutes);
 app.use('/', dashboardRoutes);
 
@@ -129,7 +129,12 @@ app.use('/', donationRoutes);
 app.use('/', adminRoutes);
 
 // SURVEYS — mounted cleanly at /surveys
+// Surveys mounted at /surveys
 app.use('/surveys', surveyRoutes);
+
+// Milestones mounted at root, route file handles /milestones etc.
+app.use('/', milestonesRoutes);
+
 
 // Milestones
 app.use('/', milestonesRoutes);
@@ -142,7 +147,7 @@ app.get('/teapot', (req, res) => {
 });
 
 /* ============================================================
-   404 Handler
+   404 Handler (must come after all normal routes)
 ============================================================ */
 app.use((req, res) => {
   res.status(404).render('public/landing', { title: 'Page Not Found' });
@@ -168,3 +173,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Ella Rises app running at http://localhost:${PORT}`);
 });
+

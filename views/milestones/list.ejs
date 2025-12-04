@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <title><%= title || 'Participant Milestones – Ella Rises' %></title>
 
-  <link rel="stylesheet" href="/css/main.css">
+  <!-- bump version so new CSS loads -->
+  <link rel="stylesheet" href="/css/main.css?v=6">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,59 +16,201 @@
 
   <div class="page-wrap">
     <div class="page">
-      <h1>Participant Milestones</h1>
+      <%
+        const rows = summaries || [];
 
-      <p>
-        Managers can use this page to see how participants are progressing
-        toward long-term milestones and key Ella Rises experiences
-        (tours, summits, workshops, and mariachi practice).
-      </p>
+        const page = typeof currentPage !== 'undefined' ? currentPage : 1;
+        const pages = typeof totalPages !== 'undefined' ? totalPages : 1;
+        const searchQuery = typeof q !== 'undefined' ? q : '';
+        const encodedQ = encodeURIComponent(searchQuery || '');
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Participant</th>
-            <th>Email</th>
-            <th>Total Milestones</th>
-            <th>First Milestone Date</th>
-            <th>University / Educational Tours</th>
-            <th>Leadership Summits</th>
-            <th>Workshops</th>
-            <th>Mariachi</th>
-            <th>Details</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% if (!summaries || summaries.length === 0) { %>
-            <tr>
-              <td colspan="9">No milestones recorded yet.</td>
-            </tr>
-          <% } else { %>
-            <% summaries.forEach(row => { %>
+        const totalParticipants =
+          typeof totalParticipantsAll !== 'undefined'
+            ? totalParticipantsAll
+            : rows.length;
+
+        const participantsWithMilestones =
+          typeof participantsWithMilestonesAll !== 'undefined'
+            ? participantsWithMilestonesAll
+            : 0;
+
+        const totalMilestones =
+          typeof totalMilestonesAll !== 'undefined'
+            ? totalMilestonesAll
+            : 0;
+      %>
+
+      <!-- Header row -->
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 1.25rem; margin-bottom: 1rem;">
+        <div>
+          <h1>Participant Milestones</h1>
+          <p style="margin: 0; font-size: 0.95rem; color: #555a55; max-width: 640px;">
+            Summary of long term Ella Rises milestones for each participant, including key
+            experiences like university tours, leadership summits, workshops, and mariachi practice.
+          </p>
+        </div>
+
+        <div>
+          <a href="/participants" class="btn-add">View Participants</a>
+        </div>
+      </div>
+
+      <!-- Stats strip using global totals -->
+      <div
+        class="dashboard-stats"
+        style="
+          margin-top: 1.2rem;
+          margin-bottom: 0.8rem;
+          padding: 0;
+          gap: 0.8rem;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        "
+      >
+        <div class="stat-card" style="padding: 0.7rem 0.8rem; border-radius: 14px;">
+          <p class="stat-label" style="font-size: 0.75rem;">Participants in table</p>
+          <p class="stat-value" style="font-size: 1.15rem;"><%= totalParticipants %></p>
+        </div>
+
+        <div class="stat-card" style="padding: 0.7rem 0.8rem; border-radius: 14px;">
+          <p class="stat-label" style="font-size: 0.75rem;">Participants with milestones</p>
+          <p class="stat-value" style="font-size: 1.15rem;"><%= participantsWithMilestones %></p>
+        </div>
+
+        <div class="stat-card" style="padding: 0.7rem 0.8rem; border-radius: 14px;">
+          <p class="stat-label" style="font-size: 0.75rem;">Total milestones recorded</p>
+          <p class="stat-value" style="font-size: 1.15rem;"><%= totalMilestones %></p>
+        </div>
+      </div>
+
+      <!-- Search bar -->
+      <form action="/milestones" method="GET" style="display: flex; gap: 0.6rem; margin-top: 0.6rem; margin-bottom: 0.6rem; align-items: center;">
+        <input
+          type="text"
+          name="q"
+          value="<%= searchQuery %>"
+          placeholder="Search by participant name or email"
+          style="flex: 1;"
+        >
+        <button type="submit" class="button-secondary">Search</button>
+      </form>
+
+      <!-- Milestones table inside shell -->
+      <div class="table-shell">
+        <div class="table-shell-inner">
+          <table class="data-table milestones-table">
+            <thead>
               <tr>
-                <td><%= row.first_name %> <%= row.last_name %></td>
-                <td><%= row.email %></td>
-                <td><%= row.milestone_count || 0 %></td>
-                <td><%= row.first_milestone_date || '—' %></td>
-                <td><%= row.university_tours || 0 %></td>
-                <td><%= row.leadership_summits || 0 %></td>
-                <td><%= row.workshops_attended || 0 %></td>
-                <td><%= row.mariachi_practice || 0 %></td>
-                <td>
-                  <a href="/participants/<%= row.id %>/milestones">
-                    View
-                  </a>
-                </td>
+                <th>Participant</th>
+                <th>Email</th>
+                <th class="numeric">Total Milestones</th>
+                <th>First Milestone Date</th>
+                <th class="numeric">University / Educational Tours</th>
+                <th class="numeric">Leadership Summits</th>
+                <th class="numeric">Workshops</th>
+                <th class="numeric">Mariachi</th>
+                <th class="action-cell">Details</th>
               </tr>
-            <% }) %>
-          <% } %>
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              <% if (!rows || rows.length === 0) { %>
+                <tr>
+                  <td colspan="9">
+                    No milestones recorded yet. Once milestones are added for participants,
+                    they will appear in this summary.
+                  </td>
+                </tr>
+              <% } else { %>
+                <% rows.forEach(row => { %>
+                  <tr>
+                    <td><%= row.first_name %> <%= row.last_name %></td>
+                    <td><%= row.email %></td>
+                    <td class="numeric"><%= row.milestone_count || 0 %></td>
+                    <td>
+                      <% if (row.first_milestone_date) { %>
+                        <%= new Date(row.first_milestone_date).toLocaleDateString('en-US') %>
+                      <% } else { %>
+                        —
+                      <% } %>
+                    </td>
+                    <td class="numeric"><%= row.university_tours || 0 %></td>
+                    <td class="numeric"><%= row.leadership_summits || 0 %></td>
+                    <td class="numeric"><%= row.workshops_attended || 0 %></td>
+                    <td class="numeric"><%= row.mariachi_practice || 0 %></td>
+                    <td class="action-cell">
+                      <a href="/participants/<%= row.id %>/milestones" class="btn-edit">
+                        View
+                      </a>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-      <p>
-        <a href="/home">&larr; Back to Home</a>
+      <!-- Pagination controls -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; font-size: 0.9rem;">
+        <div>
+          <% if (page > 1) { %>
+            <a
+              href="/milestones?page=<%= page - 1 %><% if (searchQuery) { %>&q=<%= encodedQ %><% } %>"
+              class="btn-edit"
+            >
+              &larr; Prev
+            </a>
+          <% } else { %>
+            <button type="button" class="btn-edit" disabled style="opacity: 0.5; cursor: default;">
+              &larr; Prev
+            </button>
+          <% } %>
+        </div>
+
+        <div>
+          Page <strong><%= page %></strong> of <strong><%= pages %></strong>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.4rem;">
+          <form action="/milestones" method="GET" style="display: flex; align-items: center; gap: 0.4rem; margin: 0;">
+            <% if (searchQuery) { %>
+              <input type="hidden" name="q" value="<%= searchQuery %>">
+            <% } %>
+            <span>Page</span>
+            <input
+              type="number"
+              name="page"
+              min="1"
+              max="<%= pages %>"
+              value="<%= page %>"
+              style="width: 3.2rem; padding: 0.3rem 0.4rem; border-radius: 999px; font-size: 0.85rem;"
+            >
+            <button type="submit" class="button-secondary" style="padding: 0.3rem 0.9rem;">Go</button>
+          </form>
+
+          <% if (page < pages) { %>
+            <a
+              href="/milestones?page=<%= page + 1 %><% if (searchQuery) { %>&q=<%= encodedQ %><% } %>"
+              class="btn-edit"
+            >
+              Next &rarr;
+            </a>
+          <% } else { %>
+            <button type="button" class="btn-edit" disabled style="opacity: 0.5; cursor: default;">
+              Next &rarr;
+            </button>
+          <% } %>
+        </div>
+      </div>
+
+      <p style="margin-top: 1.2rem;">
+        <a href="/home" class="link-back">&larr; Back to Home</a>
       </p>
     </div>
   </div>
 </body>
 </html>
+
+
+
+
+
