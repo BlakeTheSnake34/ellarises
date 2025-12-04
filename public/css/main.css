@@ -839,8 +839,71 @@ td.actions form {
   }
 }
 
+/* ============================
+   Global Footer (updated)
+============================ */
 
+.er-footer {
+  background-color: #ffffff;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  margin-top: 3rem;
+  padding: 1.5rem 0;
+  display: flex;
+  justify-content: center;
+}
 
+.footer-inner {
+  width: 100%;
+  max-width: 1100px;
+  text-align: center;
+  color: var(--er-charcoal);
+  font-size: 0.9rem;
+}
 
+.footer-brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: "DM Serif Display", serif;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+}
 
+/* Fix: let logo keep its natural aspect ratio */
+.footer-logo {
+  height: 44px;            /* control height only */
+  width: auto;             /* let width follow image ratio */
+  object-fit: contain;
+  border-radius: 50%;      /* keeps it round without squashing */
+}
 
+/* Social row */
+.footer-social {
+  margin-bottom: 0.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Remove underline “dash” between icons */
+.footer-social a {
+  text-decoration: none;
+}
+
+.social-icon {
+  width: 26px;
+  height: 26px;
+  transition: opacity 0.2s ease;
+  filter: invert(0); /* keep icons black */
+}
+
+.social-icon:hover {
+  opacity: 0.6;
+}
+
+.footer-copy {
+  color: #555a55;
+  font-size: 0.85rem;
+}
