@@ -5,21 +5,30 @@
   <title><%= title || 'Ella Rises' %></title>
 
   <!-- Main styles -->
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/main.css?v=10">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
   <%- include('../partials/_nav') %>
   <%- include('../partials/_flash') %>
 
+  <%
+    const safeStats = stats || {};
+    const participants = typeof safeStats.participants === 'number' ? safeStats.participants : 0;
+    const events = typeof safeStats.events === 'number' ? safeStats.events : 0;
+    const donationsNumber = Number(safeStats.donations || 0);
+  %>
+
   <div class="page-wrap">
+
+    <!-- HERO SECTION -->
     <div class="landing-hero">
       <div class="hero-left">
-        <!-- make sure file name matches exactly: public/images/ella-logo.png -->
         <img src="/images/ella-logo.png" class="hero-logo" alt="Ella Rises Logo">
       </div>
 
@@ -29,7 +38,7 @@
         <p class="hero-text">
           Ella Rises helps young women build confidence, leadership, creativity,
           and connection to their heritage through workshops, mentoring,
-          and hands-on STEAM experiences.
+          hands on STEAM experiences, and community collaboration.
         </p>
 
         <% if (!currentUser) { %>
@@ -39,19 +48,53 @@
         <% } %>
       </div>
     </div>
+
+    <!-- IMPACT CARDS -->
+    <div class="card-grid" style="margin-top: 3rem;">
+      <div class="card">
+        <div class="card-title">Participants Reached</div>
+        <div class="card-value"><%= participants %></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Events and Workshops</div>
+        <div class="card-value"><%= events %></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Total Donations</div>
+        <div class="card-value">
+          $<%= donationsNumber.toLocaleString('en-US') %>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTE FOR DONORS ABOUT ACCOUNTS -->
+    <% if (!currentUser) { %>
+      <p style="margin-top: 1.5rem; font-size: 0.95rem; color: #555a55;">
+        To make a donation you will need an Ella Rises account.  
+        Please use the Login or Sign Up buttons at the top right to create your account, then you can give and view your donation history.
+      </p>
+    <% } %>
+
   </div>
-<!-- ===== Ella Rises Photo Strip on Landing Page ===== -->
-<div class="hero-gallery">
-  <div class="hero-gallery-row">
-    <img src="/images/ellarises-1.jpg" alt="Ella Rises photo 1">
-    <img src="/images/ellarises-2.jpg" alt="Ella Rises photo 2">
-    <img src="/images/ellarises-3.jpg" alt="Ella Rises photo 3">
-    <img src="/images/ellarises-4.jpg" alt="Ella Rises photo 4">
-    <img src="/images/ellarises-5.jpg" alt="Ella Rises photo 5">
+
+  <!-- PHOTO STRIP UNDER PAGE WRAPPER -->
+  <div class="hero-gallery">
+    <div class="hero-gallery-row">
+      <img src="/images/ellarises-1.jpg" alt="Ella Rises photo 1">
+      <img src="/images/ellarises-2.jpg" alt="Ella Rises photo 2">
+      <img src="/images/ellarises-3.jpg" alt="Ella Rises photo 3">
+      <img src="/images/ellarises-4.jpg" alt="Ella Rises photo 4">
+      <img src="/images/ellarises-5.jpg" alt="Ella Rises photo 5">
+    </div>
   </div>
-</div>
+
 </body>
 </html>
+
+
+
 
 
 

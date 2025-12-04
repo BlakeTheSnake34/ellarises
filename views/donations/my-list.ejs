@@ -1,8 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title><%= title %></title>
+  <meta charset="utf-8">
+  <title><%= title || 'My Donations – Ella Rises' %></title>
+
   <link rel="stylesheet" href="/css/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -13,32 +18,103 @@
     <div class="page">
       <h1>My Donations</h1>
 
-      <a href="/my-donations/new" class="btn-add" style="margin-bottom:1rem; display:inline-block;">
-        + Make Donation
-      </a>
+      <p style="max-width: 620px; font-size: 0.95rem; color: #555a55; margin-bottom: 1.25rem;">
+        Thank you for supporting Ella Rises. This page shows a history of your gifts
+        and a quick summary of your impact.
+      </p>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
+      <% 
+        let totalDonations = 0;
+        let lastDate = null;
 
-        <tbody>
-          <% donations.forEach(d => { %>
+        if (Array.isArray(donations)) {
+          donations.forEach(d => {
+            const amt = Number(d.amount || 0);
+            totalDonations += amt;
+            if (d.date instanceof Date && !isNaN(d.date)) {
+              if (!lastDate || d.date > lastDate) {
+                lastDate = d.date;
+              }
+            }
+          });
+        }
+
+        const formattedTotal = totalDonations.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+
+        const donationCount = donations ? donations.length : 0;
+      %>
+
+      <!-- Summary cards -->
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">Total Given</div>
+          <div class="card-value">$<%= formattedTotal %></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Number of Donations</div>
+          <div class="card-value"><%= donationCount %></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Most Recent Gift</div>
+          <div class="card-value">
+            <% if (lastDate) { %>
+              <%= lastDate.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) %>
+            <% } else { %>
+              —
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Make donation button -->
+      <div style="margin-top: 1.5rem; margin-bottom: 0.75rem;">
+        <a href="/my-donations/new" class="btn-add">
+          + Make Donation
+        </a>
+      </div>
+
+      <!-- Donation history table -->
+      <div class="table-shell">
+        <table>
+          <thead>
             <tr>
-              <td>
-                <%= d.date ? d.date.toISOString().slice(0, 10) : "N/A" %>
-              </td>
-
-              <td>$<%= d.amount %></td>
+              <th>Date</th>
+              <th style="text-align:right;">Amount</th>
             </tr>
-          <% }) %>
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            <% if (!donations || donations.length === 0) { %>
+              <tr>
+                <td colspan="2">
+                  You have not made any donations yet. Click “Make Donation” above to give your first gift.
+                </td>
+              </tr>
+            <% } else { %>
+              <% donations.forEach(d => { %>
+                <tr>
+                  <td>
+                    <% if (d.date instanceof Date && !isNaN(d.date)) { %>
+                      <%= d.date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) %>
+                    <% } else { %>
+                      N/A
+                    <% } %>
+                  </td>
+                  <td style="text-align:right;">
+                    $<%= Number(d.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
 
     </div>
   </div>
 </body>
 </html>
+

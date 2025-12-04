@@ -753,6 +753,93 @@ td.actions form {
   white-space: nowrap;
 }
 
+/* Nav icons inside links */
+.nav-middle a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.nav-icon {
+  font-size: 1rem;
+}
+
+/* Manager links have a soft pill background to stand out */
+.nav-manager-link {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.nav-manager-link:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Admin dropdown */
+.nav-dropdown {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.nav-caret {
+  font-size: 0.7rem;
+}
+
+/* Dropdown menu */
+.nav-dropdown-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  min-width: 190px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  padding: 0.4rem 0;
+  display: none;
+  z-index: 20;
+}
+
+.nav-dropdown-menu a {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: var(--er-charcoal);
+}
+
+.nav-dropdown-menu a:hover {
+  background-color: var(--er-cream);
+}
+
+/* Show dropdown on hover or focus within */
+.nav-dropdown:hover .nav-dropdown-menu,
+.nav-dropdown:focus-within .nav-dropdown-menu {
+  display: block;
+}
+
+/* Small tweak on narrow screens */
+@media (max-width: 700px) {
+  .nav-dropdown-menu {
+    left: auto;
+    right: 0;
+  }
+}
+
+
 
 
 

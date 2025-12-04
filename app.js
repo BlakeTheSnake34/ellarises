@@ -17,10 +17,10 @@ const homeRoutes = require('./routes/home');
 const dashboardRoutes = require('./routes/dashboard');
 const participantRoutes = require('./routes/participants');
 const eventRoutes = require('./routes/events');
-const registrationRoutes = require('./routes/registrations');
+// registrations removed on purpose
 const donationRoutes = require('./routes/donations');
 const adminRoutes = require('./routes/admin');
-const surveyRoutes = require('./routes/surveys');   // Mounted at /surveys
+const surveyRoutes = require('./routes/surveys');
 const milestonesRoutes = require('./routes/milestones');
 
 const app = express();
@@ -37,35 +37,35 @@ app.use(
         scriptSrc: [
           "'self'",
           "'unsafe-inline'",
-          "https://public.tableau.com",
-          "https://public.tableau.com/javascripts/api/"
+          'https://public.tableau.com',
+          'https://public.tableau.com/javascripts/api/'
         ],
 
-        // Allow Google Fonts and inline styles
+        // Allow Google Fonts plus inline styles
         styleSrc: [
           "'self'",
           "'unsafe-inline'",
-          "https://fonts.googleapis.com"
+          'https://fonts.googleapis.com'
         ],
 
         // Allow Google Fonts host
         fontSrc: [
           "'self'",
-          "https://fonts.gstatic.com",
-          "data:"
+          'https://fonts.gstatic.com',
+          'data:'
         ],
 
         // Allow Tableau images and embedded content
         imgSrc: [
           "'self'",
-          "data:",
-          "https://public.tableau.com"
+          'data:',
+          'https://public.tableau.com'
         ],
 
         // Allow Tableau iframe embeds
         frameSrc: [
           "'self'",
-          "https://public.tableau.com"
+          'https://public.tableau.com'
         ]
       }
     }
@@ -104,7 +104,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Inject logged in user and flash into views
+// Inject logged in user and flash messages
 app.use(injectUser);
 
 /* ===========================
@@ -122,24 +122,22 @@ app.use('/', dashboardRoutes);
 // Main site routes
 app.use('/', participantRoutes);
 app.use('/', eventRoutes);
-app.use('/', registrationRoutes);
+// registrations routes removed
 app.use('/', donationRoutes);
 app.use('/', adminRoutes);
-
-// Surveys mounted at /surveys
-app.use('/surveys', surveyRoutes);
-
-// Milestones mounted at root, route file handles /milestones etc.
 app.use('/', milestonesRoutes);
 
-// IS 404 Requirement
+// Surveys mounted under /surveys
+app.use('/surveys', surveyRoutes);
+
+// IS 404 requirement
 app.get('/teapot', (req, res) => {
   res.status(418).send("I'm a teapot");
 });
 
-// 404 handler (must come after all normal routes)
+// 404 handler
 app.use((req, res) => {
-  res.status(404).render('public/landing', { title: 'Page Not Found' });
+  res.status(404).render('public/landing', { title: 'Page Not Found', stats: { participants: 0, events: 0, donations: 0 } });
 });
 
 // Error handler
@@ -158,4 +156,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Ella Rises app running at http://localhost:${PORT}`);
 });
+
 

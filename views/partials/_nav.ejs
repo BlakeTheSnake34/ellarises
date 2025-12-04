@@ -1,6 +1,6 @@
 <nav class="er-nav">
 
-  <!-- LEFT: brand -->
+  <!-- LEFT: Brand -->
   <div class="nav-left">
     <a href="/" class="nav-logo">
       <img src="/images/ella-logo.png" class="nav-logo-img" alt="Ella Rises Logo">
@@ -8,35 +8,86 @@
     </a>
   </div>
 
-  <!-- MIDDLE: navigation links -->
+  <!-- MIDDLE NAV LINKS -->
   <div class="nav-middle">
     <% if (currentUser) { %>
-      <a href="/home">Home</a>
-      <a href="/events">Events</a>
-      <a href="/my-donations">My Donations</a>
 
-      <!-- Only NON-managers see Take Survey -->
+      <!-- Participant / General Navigation -->
+      <a href="/home">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+      </a>
+
+      <a href="/events">
+        <span class="nav-icon">📅</span>
+        <span>Events</span>
+      </a>
+
       <% if (currentUser.role !== 'manager') { %>
-        <a href="/surveys/new">Take Survey</a>
+        <a href="/surveys/new">
+          <span class="nav-icon">📝</span>
+          <span>Take Survey</span>
+        </a>
       <% } %>
+      
+      <a href="/my-donations">
+        <span class="nav-icon">💖</span>
+        <span>My Donations</span>
+      </a>
+
 
       <% if (currentUser.role === 'manager') { %>
         <span class="nav-divider"></span>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/participants">Participants</a>
-        <a href="/surveys">Survey Results</a>
-        <a href="/admin/registrations">Registrations</a>
-        <a href="/donations">Donations</a>
 
-        <!-- Added -->
-        <a href="/milestones">Milestones</a>
+        <!-- MANAGER DASHBOARD -->
+        <a href="/dashboard" class="nav-manager-link">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
 
-        <a href="/admin/make-manager">Manager Access</a>
+        <!-- DROPDOWN FOR MANAGER TOOLS -->
+        <div class="nav-dropdown nav-manager-link">
+          <button type="button" class="nav-dropdown-toggle">
+            <span class="nav-icon">🔧</span>
+            <span>Admin Tools</span>
+            <span class="nav-caret">▾</span>
+          </button>
+
+          <div class="nav-dropdown-menu">
+
+            <a href="/participants">
+              <span class="nav-icon">👥</span>
+              <span>Participants</span>
+            </a>
+
+            <a href="/milestones">
+              <span class="nav-icon">🎓</span>
+              <span>Milestones</span>
+            </a>
+
+            <a href="/surveys">
+              <span class="nav-icon">📈</span>
+              <span>Survey Results</span>
+            </a>
+
+            <a href="/donations">
+              <span class="nav-icon">💰</span>
+              <span>Donations</span>
+            </a>
+
+            <a href="/admin/make-manager">
+              <span class="nav-icon">🔑</span>
+              <span>Manager Access</span>
+            </a>
+
+          </div>
+        </div>
       <% } %>
+
     <% } %>
   </div>
 
-  <!-- RIGHT: auth actions -->
+  <!-- RIGHT: Auth -->
   <div class="nav-right">
     <% if (currentUser) { %>
       <form action="/logout" method="POST" style="display:inline;">
@@ -50,3 +101,7 @@
   </div>
 
 </nav>
+
+
+
+
