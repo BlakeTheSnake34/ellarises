@@ -1,6 +1,6 @@
 <nav class="er-nav">
 
-  <!-- LEFT: brand -->
+  <!-- LEFT: Brand -->
   <div class="nav-left">
     <a href="/" class="nav-logo">
       <img src="/images/ella-logo.png" class="nav-logo-img" alt="Ella Rises Logo">
@@ -8,19 +8,30 @@
     </a>
   </div>
 
-  <!-- MIDDLE: navigation links -->
+  <!-- MIDDLE NAV LINKS -->
   <div class="nav-middle">
     <% if (currentUser) { %>
 
-      <!-- SHARED LINKS -->
-      <a href="/home">Home</a>
+      <!-- Participant / General Navigation -->
+      <a href="/home">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+      </a>
 
-      <!-- USERS (Non-managers) -->
+      <a href="/events">
+        <span class="nav-icon">📅</span>
+        <span>Events</span>
+      </a>
+
       <% if (currentUser.role !== 'manager') { %>
-        <a href="/registrations">Events</a>
-        <a href="/my-donations">My Donations</a>
         <a href="/surveys/new">Take Survey</a>
       <% } %>
+      
+      <a href="/my-donations">
+        <span class="nav-icon">💖</span>
+        <span>My Donations</span>
+      </a>
+
 
       <!-- MANAGERS -->
       <% if (currentUser.role === 'manager') { %>
@@ -29,13 +40,11 @@
         <a href="/donations">Donations</a>
 
         <span class="nav-divider"></span>
-
         <a href="/dashboard">Dashboard</a>
+        <a href="/participants">Participants</a>
         <a href="/surveys">Survey Results</a>
-
-        <!-- FIXED: Proper manager link to registrations -->
-        <a href="/registrations/manage">Registrations</a>
-
+        <a href="/admin/registrations">Registrations</a>
+        <a href="/donations">Donations</a>
 
         <!-- Added -->
         <a href="/milestones">Milestones</a>
@@ -46,7 +55,7 @@
     <% } %>
   </div>
 
-  <!-- RIGHT: auth actions -->
+  <!-- RIGHT: Auth -->
   <div class="nav-right">
     <% if (currentUser) { %>
       <form action="/logout" method="POST" style="display:inline;">
@@ -60,3 +69,7 @@
   </div>
 
 </nav>
+
+
+
+

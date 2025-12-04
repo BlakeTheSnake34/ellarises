@@ -1,29 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title><%= title %></title>
+  <meta charset="utf-8">
+  <title><%= title || 'Make a Donation' %></title>
+
   <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
   <%- include('../partials/_nav') %>
   <%- include('../partials/_flash') %>
 
-  <h1>Make a Donation</h1>
+  <div class="page-wrap">
+    <div class="page">
 
-  <form action="/my-donations" method="POST">
+      <h1>Make a Donation</h1>
 
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <p style="max-width: 640px; font-size: 0.95rem; color: #555a55; margin-bottom: 1.5rem;">
+        Your support helps young women grow through hands-on STEAM experiences, leadership workshops, mentoring,
+        and cultural enrichment. Thank you for being part of our mission.
+      </p>
 
-    <label>Donation Date</label>
-    <input type="date" name="donation_date" required>
+      <form action="/my-donations" method="POST" style="max-width: 420px;">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-    <label>Donation Amount ($)</label>
-    <input type="number" step="0.01" name="donation_amount" required>
+        <div class="form-row">
+          <label for="donation_date">Donation Date</label>
+          <input type="date" id="donation_date" name="donation_date" required>
+        </div>
 
-    <button type="submit" class="btn">Donate</button>
+        <div class="form-row">
+          <label for="donation_amount">Donation Amount ($)</label>
+          <input 
+            type="number"
+            id="donation_amount"
+            name="donation_amount"
+            step="0.01"
+            min="0.01"
+            placeholder="Enter amount"
+            required
+          >
+        </div>
 
-  </form>
+        <button type="submit" class="btn-primary" style="margin-top: 0.5rem;">
+          Submit Donation
+        </button>
+      </form>
+
+    </div>
+  </div>
 
 </body>
 </html>
+
