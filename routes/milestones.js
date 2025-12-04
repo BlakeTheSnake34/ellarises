@@ -4,36 +4,81 @@ const router = express.Router();
 const knex = require('../db/knex');
 const { requireAuth, requireManager } = require('../middleware/auth');
 
+// helper to build base query with optional search filter
+function milestonesBaseQuery(q) {
+  const like = `%${q}%`;
+  const query = knex('participants as p')
+    .leftJoin('milestones as m', 'm.participantemail', 'p.participantemail');
+
+  if (q) {
+    query.where(function () {
+      this.where('p.participantfirstname', 'ILIKE', like)
+        .orWhere('p.participantlastname', 'ILIKE', like)
+        .orWhere('p.participantemail', 'ILIKE', like);
+    });
+  }
+
+  return query;
+}
+
 /**
- * MANAGER-ONLY: summary view of participant milestones
- * - One row per participant
- * - Counts ALL milestones (any MilestoneTitle)
- * - Extra counts for key milestone types Nadia mentioned:
- *   - University / Educational tours
- *   - Leadership summits
- *   - Weekly workshops
- *   - Mariachi practice
- *
- * Assumptions:
- *   - milestones table: participantemail, milestonetitle, milestonedate
- *   - participants table: id, first_name, last_name, email
- *   - milestones.participantemail matches participants.email
+ * Manager only: summary view of participant milestones
  */
 router.get('/milestones', requireAuth, requireManager, async (req, res) => {
   try {
-    const summaries = await knex('participants as p')
-      .leftJoin('milestones as m', 'm.participantemail', 'p.email')
-      .groupBy('p.id', 'p.first_name', 'p.last_name', 'p.email')
+    const rawPage = parseInt(req.query.page, 10);
+    let page = Number.isNaN(rawPage) || rawPage < 1 ? 1 : rawPage;
+    const limit = 25;
+
+    const q = (req.query.q || '').trim();
+
+    // global totals across all pages (respecting search filter)
+    const totalsRow = await milestonesBaseQuery(q)
+      .clone()
+      .clearSelect()
+      .clearOrder()
+      .select(
+        knex.raw('COUNT(DISTINCT p.id) AS total_participants'),
+        knex.raw(`
+          COUNT(DISTINCT CASE WHEN m.milestonetitle IS NOT NULL THEN p.id END)
+          AS participants_with_milestones
+        `),
+        knex.raw('COUNT(m.milestonetitle) AS total_milestones')
+      )
+      .first();
+
+    const totalParticipantsAll = parseInt(totalsRow.total_participants, 10) || 0;
+    const participantsWithMilestonesAll =
+      parseInt(totalsRow.participants_with_milestones, 10) || 0;
+    const totalMilestonesAll = parseInt(totalsRow.total_milestones, 10) || 0;
+
+    const totalPages = Math.max(
+      1,
+      Math.ceil(totalParticipantsAll / limit)
+    );
+
+    if (page > totalPages) {
+      page = totalPages;
+    }
+
+    const offset = (page - 1) * limit;
+
+    // page of summaries with same filter
+    const summaries = await milestonesBaseQuery(q)
+      .clone()
+      .groupBy(
+        'p.id',
+        'p.participantfirstname',
+        'p.participantlastname',
+        'p.participantemail'
+      )
       .select(
         'p.id',
-        'p.first_name',
-        'p.last_name',
-        'p.email',
-        // total milestones for this participant
+        knex.raw('p.participantfirstname AS first_name'),
+        knex.raw('p.participantlastname AS last_name'),
+        knex.raw('p.participantemail AS email'),
         knex.raw('COUNT(m.milestonetitle) AS milestone_count'),
-        // earliest milestone date
         knex.raw('MIN(m.milestonedate) AS first_milestone_date'),
-        // key milestone “categories” from Nadia’s notes
         knex.raw(`
           SUM(
             CASE
@@ -69,28 +114,41 @@ router.get('/milestones', requireAuth, requireManager, async (req, res) => {
           ) AS mariachi_practice
         `)
       )
-      .orderBy('p.last_name')
-      .orderBy('p.first_name');
+      .orderBy('p.participantlastname')
+      .orderBy('p.participantfirstname')
+      .limit(limit)
+      .offset(offset);
 
     res.render('milestones/list', {
       title: 'Participant Milestones',
-      summaries
+      summaries,
+      currentPage: page,
+      totalPages,
+      q,
+      totalParticipantsAll,
+      participantsWithMilestonesAll,
+      totalMilestonesAll
     });
   } catch (err) {
-    console.error(err);
+    console.error('Error loading milestones summary', err);
     req.flash('error', 'Could not load milestones summary');
     res.redirect('/');
   }
 });
 
 /**
- * MANAGER-ONLY: detail view for one participant’s milestones
- * Shows EVERY milestone title + date for that participant.
+ * Manager only: detail view for one participant milestones
  */
 router.get('/participants/:id/milestones', requireAuth, requireManager, async (req, res) => {
   try {
-    const participant = await knex('participants')
-      .where({ id: req.params.id })
+    const participant = await knex('participants as p')
+      .where('p.id', req.params.id)
+      .select(
+        'p.id',
+        knex.raw('p.participantfirstname AS first_name'),
+        knex.raw('p.participantlastname AS last_name'),
+        knex.raw('p.participantemail AS email')
+      )
       .first();
 
     if (!participant) {
@@ -108,10 +166,18 @@ router.get('/participants/:id/milestones', requireAuth, requireManager, async (r
       milestones
     });
   } catch (err) {
-    console.error(err);
+    console.error('Could not load participant milestones', err);
     req.flash('error', 'Could not load participant milestones');
     res.redirect('/milestones');
   }
 });
 
 module.exports = router;
+
+
+
+
+
+
+
+

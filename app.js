@@ -20,51 +20,50 @@ const eventRoutes = require('./routes/events');
 const registrationRoutes = require('./routes/registrations');
 const donationRoutes = require('./routes/donations');
 const adminRoutes = require('./routes/admin');
-const surveyRoutes = require('./routes/surveys');   // Mounted later at /surveys
+const surveyRoutes = require('./routes/surveys');   // Mounted at /surveys
 const milestonesRoutes = require('./routes/milestones');
 
 const app = express();
 
-// Security headers
 // Security headers
 app.use(
   helmet({
     contentSecurityPolicy: {
       useDefaults: true,
       directives: {
-        "default-src": ["'self'"],
+        defaultSrc: ["'self'"],
 
         // Allow Tableau scripts
-        "script-src": [
+        scriptSrc: [
           "'self'",
           "'unsafe-inline'",
           "https://public.tableau.com",
           "https://public.tableau.com/javascripts/api/"
         ],
 
-        // Allow Google Fonts + inline styles + Tableau styles
-        "style-src": [
+        // Allow Google Fonts and inline styles
+        styleSrc: [
           "'self'",
           "'unsafe-inline'",
           "https://fonts.googleapis.com"
         ],
 
-        // Allow Google Fonts host + Tableau font loading
-        "font-src": [
+        // Allow Google Fonts host
+        fontSrc: [
           "'self'",
           "https://fonts.gstatic.com",
           "data:"
         ],
 
-        // Allow Tableau images + embedded content
-        "img-src": [
+        // Allow Tableau images and embedded content
+        imgSrc: [
           "'self'",
           "data:",
           "https://public.tableau.com"
         ],
 
         // Allow Tableau iframe embeds
-        "frame-src": [
+        frameSrc: [
           "'self'",
           "https://public.tableau.com"
         ]
@@ -72,7 +71,6 @@ app.use(
     }
   })
 );
-
 
 // View engine setup
 app.set('view engine', 'ejs');
@@ -90,7 +88,7 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET || 'dev-secret-key',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: false
   })
 );
 
@@ -106,18 +104,18 @@ app.use((req, res, next) => {
   next();
 });
 
-// Inject logged-in user + flash
+// Inject logged in user and flash into views
 app.use(injectUser);
 
 /* ===========================
-   ROUTES (ORDER MATTERS!)
+   ROUTES (ORDER MATTERS)
 =========================== */
 
-// Public + auth routes
+// Public and auth routes
 app.use('/', publicRoutes);
 app.use('/', authRoutes);
 
-// Logged-in pages
+// Logged in pages
 app.use('/', homeRoutes);
 app.use('/', dashboardRoutes);
 
@@ -128,15 +126,18 @@ app.use('/', registrationRoutes);
 app.use('/', donationRoutes);
 app.use('/', adminRoutes);
 
-// SURVEYS — must be mounted at /surveys
+// Surveys mounted at /surveys
 app.use('/surveys', surveyRoutes);
+
+// Milestones mounted at root, route file handles /milestones etc.
+app.use('/', milestonesRoutes);
 
 // IS 404 Requirement
 app.get('/teapot', (req, res) => {
   res.status(418).send("I'm a teapot");
 });
 
-// 404 handler
+// 404 handler (must come after all normal routes)
 app.use((req, res) => {
   res.status(404).render('public/landing', { title: 'Page Not Found' });
 });
@@ -152,12 +153,9 @@ app.use((err, req, res, next) => {
   res.status(500).send('Internal Server Error.');
 });
 
-// Router for milestones
-app.use(milestonesRoutes);
-
-
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Ella Rises app running at http://localhost:${PORT}`);
 });
+
