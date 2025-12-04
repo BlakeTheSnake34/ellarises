@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title><%= title || 'Participant Milestones – Ella Rises' %></title>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css?v=7">
 
-  <link rel="stylesheet" href="/css/main.css?v=4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,49 +15,40 @@
 
   <div class="page-wrap">
     <div class="page">
+      <h1>
+        Milestones for
+        <span><%= participant.first_name %> <%= participant.last_name %></span>
+      </h1>
 
-      <!-- Header and summary -->
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; margin-bottom: 1.25rem;">
-        <div>
-          <h1>
-            Milestones for
-            <%= participant.first_name %> <%= participant.last_name %>
-          </h1>
-          <p style="margin: 0.1rem 0; font-size: 0.95rem;">
-            Email:
-            <strong><%= participant.email %></strong>
-          </p>
-          <p style="margin: 0.35rem 0 0; font-size: 0.9rem; color: #555a55;">
-            This page shows long term achievements for this participant, such as
-            degrees, certificates, internships, competitions, and other important
-            experiences.
-          </p>
-        </div>
+      <p style="margin-top: 0; color:#555a55;">
+        Email:
+        <strong><%= participant.email %></strong>
+      </p>
 
-        <div style="text-align: right;">
-          <a href="/milestones" class="btn-add" style="margin-bottom: 0.4rem; display: inline-block;">
-            &larr; All Milestones
-          </a>
-          <br>
-          <a href="/participants" class="link-back">Back to Participants</a>
-        </div>
-      </div>
+      <p style="margin-top: 0.35rem;">
+        <a href="/milestones" class="link-back">&larr; Back to milestone summary</a>
+      </p>
 
-      <h2 style="margin-top: 0;">Milestone History</h2>
+      <p style="margin-top: 1rem;">
+        <a href="/participants/<%= participant.id %>/milestones/new" class="btn-add">
+          + Add milestone
+        </a>
+      </p>
 
       <div class="table-shell">
         <div class="table-shell-inner">
-          <table>
+          <table class="data-table">
             <thead>
               <tr>
-                <th>Milestone Title</th>
+                <th>Milestone title</th>
                 <th>Date</th>
+                <th class="action-cell">Actions</th>
               </tr>
             </thead>
             <tbody>
               <% if (!milestones || milestones.length === 0) { %>
                 <tr>
-                  <td colspan="2">
+                  <td colspan="3">
                     No milestones recorded yet for this participant.
                   </td>
                 </tr>
@@ -72,6 +63,31 @@
                         —
                       <% } %>
                     </td>
+                    <td class="action-cell">
+                      <a
+                        href="/milestones/<%= m.id %>/edit"
+                        class="btn-edit"
+                      >
+                        Edit
+                      </a>
+
+                      <form
+                        action="/milestones/<%= m.id %>/delete"
+                        method="POST"
+                        class="inline-form"
+                        onsubmit="return confirm('Delete this milestone?');"
+                      >
+                        <input
+                          type="hidden"
+                          name="_csrf"
+                          value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"
+                        >
+                        <input type="hidden" name="participant_id" value="<%= participant.id %>">
+                        <button type="submit" class="btn-delete">
+                          Delete
+                        </button>
+                      </form>
+                    </td>
                   </tr>
                 <% }) %>
               <% } %>
@@ -81,13 +97,16 @@
       </div>
 
       <p style="margin-top: 1.2rem;">
-        <a href="/milestones" class="link-back">&larr; Back to all participant milestones</a>
+        <a href="/home" class="link-back">&larr; Back to home</a>
       </p>
     </div>
   </div>
+
   <%- include('../partials/_footer') %>
 </body>
 </html>
+
+
 
 
 

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css?v=7">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+      <h1><%= title %></h1>
+
+      <p style="margin-top: 0; color:#555a55;">
+        Participant:
+        <strong><%= participant.first_name %> <%= participant.last_name %></strong>
+        (<%= participant.email %>)
+      </p>
+
+      <form action="<%= formAction %>" method="POST" style="max-width: 480px;">
+        <input
+          type="hidden"
+          name="_csrf"
+          value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"
+        >
+        <% if (milestone && milestone.id) { %>
+          <!-- for redirect after edit -->
+          <input type="hidden" name="participant_id" value="<%= participant.id %>">
+        <% } %>
+
+        <div class="form-row">
+          <label for="milestonetitle">Milestone title</label>
+          <input
+            id="milestonetitle"
+            type="text"
+            name="milestonetitle"
+            required
+            value="<%= milestone.milestonetitle || '' %>"
+          >
+        </div>
+
+        <div class="form-row">
+          <label for="milestonedate">Milestone date</label>
+          <input
+            id="milestonedate"
+            type="date"
+            name="milestonedate"
+            value="<%=
+              milestone.milestonedate
+                ? new Date(milestone.milestonedate).toISOString().slice(0,10)
+                : ''
+            %>"
+          >
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 1rem;">
+          <%= submitLabel %>
+        </button>
+      </form>
+
+      <p style="margin-top: 1.2rem;">
+        <a href="/participants/<%= participant.id %>/milestones" class="link-back">
+          &larr; Back to participant milestones
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <%- include('../partials/_footer') %>
+</body>
+</html>
+
