@@ -5,59 +5,16 @@ const { requireAuth, requireManager } = require('../middleware/auth');
 
 /* ============================================================
    USER — TAKE SURVEY FORM (GET /surveys/new)
-   - Shows only PAST events this user attended
-   - Shows status: "Survey Complete" / "Survey Needed"
-   - Lets them choose an incomplete event to review
 ============================================================ */
 router.get('/new', requireAuth, async (req, res) => {
   try {
-    const userEmail = req.session.user.email;
-    const { eventname: selectedEventName, start: selectedStart } = req.query;
-
-    // All past attended events for this participant
-    const rawRows = await knex('registrations as r')
-      .join('eventoccurrences as eo', function () {
-        this.on('r.eventname', 'eo.eventname')
-            .andOn('r.eventdatetimestart', 'eo.eventdatetimestart');
-      })
-      .leftJoin('surveys as s', function () {
-        this.on('r.participantemail', 's.participantemail')
-            .andOn('r.eventname', 's.eventname')
-            .andOn('r.eventdatetimestart', 's.eventdatetimestart');
-      })
-      .where('r.participantemail', userEmail)
-      .andWhere('r.registrationattendedflag', true)
-      .andWhere('eo.eventdatetimestart', '<', knex.fn.now())
-      .select(
-        'eo.eventname',
-        'eo.eventdatetimestart',
-        'eo.eventlocation',
-        's.participantemail as survey_participantemail'
-      )
-      .orderBy('eo.eventdatetimestart', 'desc');
-
-    // Normalize into a friendlier structure
-    const eventStatuses = rawRows.map(row => ({
-      eventname: row.eventname,
-      eventdatetimestart: row.eventdatetimestart,
-      eventlocation: row.eventlocation,
-      hasSurvey: !!row.survey_participantemail
-    }));
-
-    // Only events that do NOT have a survey yet
-    const incompleteEvents = eventStatuses.filter(e => !e.hasSurvey);
-
-    // If they clicked a "Take Survey" button from the table,
-    // we pre-select that event and hide the dropdown.
-    const prefillEventName = selectedEventName || null;
-    const prefillEventStart = selectedStart || null;
+    const events = await knex('eventoccurrences')
+      .select('eventname', 'eventdatetimestart')
+      .orderBy('eventdatetimestart', 'desc');
 
     res.render('surveys/new', {
       title: 'Take Survey',
-      eventStatuses,
-      incompleteEvents,
-      prefillEventName,
-      prefillEventStart
+      events
     });
 
   } catch (err) {
@@ -69,13 +26,10 @@ router.get('/new', requireAuth, async (req, res) => {
 
 /* ============================================================
    USER — SUBMIT SURVEY (POST /surveys)
-   - Supports:
-       1) eventname + eventdatetimestart fields
-       2) combinedEvent = "EventName|||ISO_DATETIME" from dropdown
 ============================================================ */
 router.post('/', requireAuth, async (req, res) => {
   try {
-    let {
+    const {
       eventname,
       eventdatetimestart,
       surveysatisfactionscore,
@@ -84,23 +38,8 @@ router.post('/', requireAuth, async (req, res) => {
       surveyrecommendationscore,
       surveyoverallscore,
       surveynpsbucket,
-      surveycomments,
-      combinedEvent
+      surveycomments
     } = req.body;
-
-    // If the combined value was used (dropdown), unpack it
-    if ((!eventname || !eventdatetimestart) && combinedEvent) {
-      const parts = combinedEvent.split('|||');
-      if (parts.length === 2) {
-        eventname = parts[0];
-        eventdatetimestart = parts[1];
-      }
-    }
-
-    if (!eventname || !eventdatetimestart) {
-      req.flash('error', 'Please select an event to review.');
-      return res.redirect('/surveys/new');
-    }
 
     await knex('surveys').insert({
       participantemail: req.session.user.email,
@@ -128,7 +67,6 @@ router.post('/', requireAuth, async (req, res) => {
 
 /* ============================================================
    MANAGER — VIEW SURVEY RESULTS (GET /surveys)
-   (unchanged from your current version, just kept here)
 ============================================================ */
 router.get('/', requireManager, async (req, res) => {
   const { search = "", sort = "date_desc", page = 1, event = "" } = req.query;
@@ -193,6 +131,7 @@ router.get('/', requireManager, async (req, res) => {
           .orderBy('p.participantlastname', 'desc');
         break;
 
+      // CLICKABLE score sorts
       case "overall_asc":
         baseQuery.orderBy('s.surveyoverallscore', 'asc');
         break;
@@ -238,6 +177,7 @@ router.get('/', requireManager, async (req, res) => {
     const totalPages = Math.ceil(totalResults / limit);
     const surveys = await baseQuery.clone().limit(limit).offset(offset);
 
+    // Event dropdown options
     const eventsList = await knex('surveys')
       .distinct('eventname')
       .orderBy('eventname', 'asc');

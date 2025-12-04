@@ -1,276 +1,117 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= title %></title>
+  <title>Take Survey</title>
   <link rel="stylesheet" href="/css/main.css">
 
   <style>
-    .survey-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-      gap: 2rem;
-      align-items: flex-start;
+    .survey-form-container {
+      max-width: 700px;
+      margin: 0 auto;
     }
 
-    @media (max-width: 1024px) {
-      .survey-layout {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: var(--er-cream);
-      border-radius: 16px;
-      padding: 1.25rem 1.5rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,.06);
-    }
-
-    .card h2 {
-      margin-top: 0;
-      margin-bottom: .75rem;
-    }
-
-    .status-pill {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: .75rem;
-      font-weight: 600;
-    }
-    .status-complete {
-      background: #c6f6d5;
-      color: #22543d;
-    }
-    .status-needed {
-      background: #fed7d7;
-      color: #742a2a;
-    }
-
-    .survey-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .9rem;
-    }
-    .survey-table th,
-    .survey-table td {
-      padding: .4rem .5rem;
-      border-bottom: 1px solid #e2e8f0;
-      text-align: left;
-    }
-
-    .btn-small {
-      font-size: .8rem;
-      padding: .25rem .55rem;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      background: var(--er-blue);
-      color: var(--er-charcoal);
-      text-decoration: none;
-      display: inline-block;
-    }
-    .btn-small:hover {
-      background: var(--er-blush);
-    }
-
-    .form-field {
-      margin-bottom: 1rem;
-    }
-    .form-field label {
+    .survey-form label {
       display: block;
-      margin-bottom: .3rem;
+      margin-top: 1rem;
       font-weight: 600;
     }
-    .form-field select,
-    .form-field textarea,
-    .form-field input[type="number"] {
+
+    .survey-form select,
+    .survey-form textarea,
+    .survey-form input[type="number"] {
       width: 100%;
+      padding: 10px;
       border-radius: 10px;
       border: 1px solid #ccc;
-      padding: 0.55rem 0.75rem;
-      font-size: .95rem;
+      margin-top: 6px;
     }
 
-    .muted-text {
-      font-size: .88rem;
-      color: #4a5568;
+    .survey-form button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 14px;
+      font-size: 1.1rem;
     }
   </style>
 </head>
+
 <body>
 
 <%- include('../partials/_nav') %>
 <%- include('../partials/_flash') %>
 
 <div class="page-wrap">
-  <div class="page">
+  <div class="page survey-form-container">
 
-    <h1>Take a Survey</h1>
-    <p class="muted-text">
-      Please share feedback for events you’ve attended. You can only fill out one survey per event.
-    </p>
+    <h1>Event Survey</h1>
 
-    <div class="survey-layout">
+    <% if (events.length === 0) { %>
+      <p>No events available to review at this time.</p>
+    <% } else { %>
 
-      <!-- LEFT: Past events & survey status -->
-      <div class="card">
-        <h2>Your Past Events</h2>
-        <p class="muted-text">
-          These are events you attended in the past. “Survey Needed” means we’re still waiting
-          on your feedback.
-        </p>
+    <form method="POST" action="/surveys" class="survey-form">
 
-        <% if (eventStatuses && eventStatuses.length) { %>
-          <div style="max-height: 380px; overflow-y: auto;">
-            <table class="survey-table">
-              <thead>
-                <tr>
-                  <th>Event</th>
-                  <th>Date</th>
-                  <th>Location</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% eventStatuses.forEach(ev => { %>
-                  <tr>
-                    <td><%= ev.eventname %></td>
-                    <td>
-                      <%= ev.eventdatetimestart 
-                            ? new Date(ev.eventdatetimestart).toLocaleString() 
-                            : 'N/A' %>
-                    </td>
-                    <td><%= ev.eventlocation || '' %></td>
-                    <td>
-                      <% if (ev.hasSurvey) { %>
-                        <span class="status-pill status-complete">Survey Complete</span>
-                      <% } else { %>
-                        <span class="status-pill status-needed">Survey Needed</span>
-                      <% } %>
-                    </td>
-                    <td>
-                      <% if (!ev.hasSurvey) { %>
-                        <a
-                          class="btn-small"
-                          href="/surveys/new?eventname=<%= encodeURIComponent(ev.eventname) %>&start=<%= encodeURIComponent(ev.eventdatetimestart.toISOString()) %>"
-                        >
-                          Take Survey
-                        </a>
-                      <% } else { %>
-                        —
-                      <% } %>
-                    </td>
-                  </tr>
-                <% }) %>
-              </tbody>
-            </table>
-          </div>
-        <% } else { %>
-          <p class="muted-text">
-            You don’t have any past attended events that we can find in the system yet.
-          </p>
-        <% } %>
-      </div>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-      <!-- RIGHT: Survey form -->
-      <div class="card">
-        <h2>Survey Form</h2>
+      <!-- EVENT SELECT -->
+      <label for="eventname">Select Event</label>
+      <select name="eventname" required>
+        <option value="" disabled selected>Select an event...</option>
+        <% events.forEach(e => { %>
+          <option value="<%= e.eventname %>"
+                  data-datetime="<%= e.eventdatetimestart %>">
+            <%= e.eventname %> — <%= new Date(e.eventdatetimestart).toLocaleString() %>
+          </option>
+        <% }) %>
+      </select>
 
-        <% if (incompleteEvents && incompleteEvents.length === 0 && !prefillEventName) { %>
-          <p class="muted-text">
-            Great job! You’ve completed surveys for all your past events.  
-            Once you attend new events, they’ll show up here for feedback.
-          </p>
-        <% } else { %>
+      <!-- Hidden field auto-filled via JS -->
+      <input type="hidden" name="eventdatetimestart" id="eventDateHidden">
 
-          <form action="/surveys" method="POST">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const eventSelect = document.querySelector("select[name='eventname']");
+          const hiddenField = document.getElementById("eventDateHidden");
 
-            <!-- Event selection -->
-            <div class="form-field">
-              <label>Event</label>
+          eventSelect.addEventListener("change", () => {
+            const selected = eventSelect.options[eventSelect.selectedIndex];
+            hiddenField.value = selected.getAttribute("data-datetime");
+          });
+        });
+      </script>
 
-              <% if (prefillEventName && prefillEventStart) { %>
-                <!-- Preselected event (came from "Take Survey" link) -->
-                <p class="muted-text">
-                  <strong><%= decodeURIComponent(prefillEventName) %></strong><br>
-                  <%= new Date(decodeURIComponent(prefillEventStart)).toLocaleString() %>
-                </p>
+      <!-- SCORES -->
+      <label>Satisfaction (1–5)</label>
+      <input type="number" name="surveysatisfactionscore" min="1" max="5" required>
 
-                <input type="hidden" name="eventname" value="<%= decodeURIComponent(prefillEventName) %>">
-                <input type="hidden" name="eventdatetimestart" value="<%= decodeURIComponent(prefillEventStart) %>">
+      <label>Usefulness (1–5)</label>
+      <input type="number" name="surveyusefulnessscore" min="1" max="5" required>
 
-              <% } else { %>
-                <!-- Dropdown of incomplete events -->
-                <select name="combinedEvent" required>
-                  <option value="">Select an event to review...</option>
-                  <% incompleteEvents.forEach(ev => { %>
-                    <option value="<%= ev.eventname %>|||<%= ev.eventdatetimestart.toISOString() %>">
-                      <%= ev.eventname %> —
-                      <%= ev.eventdatetimestart ? new Date(ev.eventdatetimestart).toLocaleString() : 'N/A' %>
-                    </option>
-                  <% }) %>
-                </select>
-                <p class="muted-text">
-                  Only events that still need a survey are shown here.
-                </p>
-              <% } %>
-            </div>
+      <label>Instructor Quality (1–5)</label>
+      <input type="number" name="surveyinstructorscore" min="1" max="5" required>
 
-            <!-- Scores (you can adjust ranges/text to match your rubric) -->
-            <div class="form-field">
-              <label for="surveysatisfactionscore">Satisfaction (1–5)</label>
-              <input type="number" min="1" max="5" name="surveysatisfactionscore" required>
-            </div>
+      <label>Recommend (1–5)</label>
+      <input type="number" name="surveyrecommendationscore" min="1" max="5" required>
 
-            <div class="form-field">
-              <label for="surveyusefulnessscore">Usefulness (1–5)</label>
-              <input type="number" min="1" max="5" name="surveyusefulnessscore" required>
-            </div>
+      <label>Overall (1–10)</label>
+      <input type="number" name="surveyoverallscore" min="1" max="10" required>
 
-            <div class="form-field">
-              <label for="surveyinstructorscore">Instructor (1–5)</label>
-              <input type="number" min="1" max="5" name="surveyinstructorscore" required>
-            </div>
+      <label>NPS Category</label>
+      <select name="surveynpsbucket" required>
+        <option value="" disabled selected>Select NPS</option>
+        <option value="Promoter">Promoter (9–10)</option>
+        <option value="Passive">Passive (7–8)</option>
+        <option value="Detractor">Detractor (0–6)</option>
+      </select>
 
-            <div class="form-field">
-              <label for="surveyrecommendationscore">Recommend to a friend (1–5)</label>
-              <input type="number" min="1" max="5" name="surveyrecommendationscore" required>
-            </div>
+      <label>Additional Comments</label>
+      <textarea name="surveycomments" rows="4"></textarea>
 
-            <div class="form-field">
-              <label for="surveyoverallscore">Overall (1–10)</label>
-              <input type="number" min="1" max="10" name="surveyoverallscore" required>
-            </div>
+      <button class="btn-primary">Submit Survey</button>
+    </form>
 
-            <div class="form-field">
-              <label for="surveynpsbucket">NPS Bucket</label>
-              <select name="surveynpsbucket" required>
-                <option value="">Select one...</option>
-                <option value="Detractor">Detractor (0–6)</option>
-                <option value="Passive">Passive (7–8)</option>
-                <option value="Promoter">Promoter (9–10)</option>
-              </select>
-            </div>
+    <% } %>
 
-            <div class="form-field">
-              <label for="surveycomments">Comments (optional)</label>
-              <textarea
-                name="surveycomments"
-                rows="4"
-                placeholder="What went well? What could be improved?"
-              ></textarea>
-            </div>
-
-            <button type="submit" class="btn-primary">
-              Submit Survey
-            </button>
-          </form>
-        <% } %>
-      </div>
-
-    </div>
   </div>
 </div>
 
