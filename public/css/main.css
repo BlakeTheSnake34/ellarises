@@ -907,3 +907,47 @@ td.actions form {
   color: #555a55;
   font-size: 0.85rem;
 }
+
+/* Prevent wrapping */
+.no-wrap {
+  white-space: nowrap;
+}
+
+/* Manager dropdown wrapper */
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-dropdown-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-dropdown-content {
+  display: none;
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.5rem;
+  min-width: 180px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 50;
+}
+
+.nav-dropdown-content a {
+  display: block;
+  padding: 0.35rem 0.5rem;
+  white-space: nowrap;
+}
+
+.nav-dropdown:hover .nav-dropdown-content {
+  display: block;
+}
