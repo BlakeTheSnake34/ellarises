@@ -1,9 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
+  <meta charset="utf-8">
+  <title><%= title || 'Login | Ella Rises' %></title>
+
   <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
   <%- include('../partials/_nav') %>
@@ -11,20 +19,36 @@
 
   <div class="page-wrap">
     <div class="page">
-
       <h1>Login</h1>
 
-      <form action="/login" method="POST">
+      <p style="max-width: 520px; font-size: 0.95rem; color: #555a55; margin-bottom: 1.5rem;">
+        Sign in to see upcoming events, take surveys, track your participation,
+        and view your donation history with Ella Rises.
+      </p>
+
+      <form action="/login" method="POST" style="max-width: 420px;">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
         <div class="form-row">
-          <label>Email</label>
-          <input type="email" name="email" required>
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            autocomplete="email"
+            required
+          >
         </div>
 
         <div class="form-row">
-          <label>Password</label>
-          <input type="password" name="password" required>
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            autocomplete="current-password"
+            required
+          >
         </div>
 
         <button type="submit" class="btn-primary" style="margin-top: 1.25rem;">
@@ -32,9 +56,9 @@
         </button>
       </form>
 
-      <p style="margin-top: 1rem;">
-        Don’t have an account?
-        <a href="/signup" class="link-back">Sign up here</a>
+      <p style="margin-top: 1rem; font-size: 0.9rem;">
+        Do not have an account yet
+        <a href="/signup" class="link-back">Create one here</a>
       </p>
 
     </div>
@@ -42,4 +66,5 @@
 
 </body>
 </html>
+
 

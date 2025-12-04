@@ -12,7 +12,7 @@
   <div class="nav-middle">
     <% if (currentUser) { %>
 
-      <!-- Participant / General Navigation -->
+      <!-- Participant / general navigation -->
       <a href="/home">
         <span class="nav-icon">🏠</span>
         <span>Home</span>
@@ -24,32 +24,49 @@
       </a>
 
       <% if (currentUser.role !== 'manager') { %>
-        <a href="/surveys/new">Take Survey</a>
+        <a href="/surveys/new">
+          <span class="nav-icon">📝</span>
+          <span>Take Survey</span>
+        </a>
       <% } %>
-      
+
       <a href="/my-donations">
         <span class="nav-icon">💖</span>
         <span>My Donations</span>
       </a>
 
-
-      <!-- MANAGERS -->
       <% if (currentUser.role === 'manager') { %>
-        <a href="/events">Events</a>
-        <a href="/participants">Participants</a>
-        <a href="/donations">Donations</a>
-
         <span class="nav-divider"></span>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/participants">Participants</a>
-        <a href="/surveys">Survey Results</a>
-        <a href="/admin/registrations">Registrations</a>
-        <a href="/donations">Donations</a>
 
-        <!-- Added -->
-        <a href="/milestones">Milestones</a>
+        <a href="/dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
 
-        <a href="/admin/make-manager">Manager Access</a>
+        <a href="/participants">
+          <span class="nav-icon">👥</span>
+          <span>Participants</span>
+        </a>
+
+        <a href="/milestones">
+          <span class="nav-icon">🎓</span>
+          <span>Milestones</span>
+        </a>
+
+        <a href="/surveys">
+          <span class="nav-icon">📈</span>
+          <span>Survey Results</span>
+        </a>
+
+        <a href="/donations">
+          <span class="nav-icon">💰</span>
+          <span>Donations</span>
+        </a>
+
+        <a href="/admin/make-manager">
+          <span class="nav-icon">🔑</span>
+          <span>Manager Access</span>
+        </a>
       <% } %>
 
     <% } %>
@@ -69,6 +86,8 @@
   </div>
 
 </nav>
+
+
 
 
 
