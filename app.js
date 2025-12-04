@@ -21,6 +21,7 @@ const registrationRoutes = require('./routes/registrations');
 const donationRoutes = require('./routes/donations');
 const adminRoutes = require('./routes/admin');
 const surveyRoutes = require('./routes/surveys');   // Mounted later at /surveys
+const milestonesRoutes = require('./routes/milestones');
 
 const app = express();
 
@@ -150,6 +151,10 @@ app.use((err, req, res, next) => {
 
   res.status(500).send('Internal Server Error.');
 });
+
+// Router for milestones
+app.use(milestonesRoutes);
+
 
 // Start server
 const PORT = process.env.PORT || 3000;

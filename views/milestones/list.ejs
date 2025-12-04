@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title><%= title || 'Participant Milestones – Ella Rises' %></title>
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+      <h1>Participant Milestones</h1>
+
+      <p>
+        Managers can use this page to see how participants are progressing
+        toward long-term milestones and key Ella Rises experiences
+        (tours, summits, workshops, and mariachi practice).
+      </p>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Participant</th>
+            <th>Email</th>
+            <th>Total Milestones</th>
+            <th>First Milestone Date</th>
+            <th>University / Educational Tours</th>
+            <th>Leadership Summits</th>
+            <th>Workshops</th>
+            <th>Mariachi</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (!summaries || summaries.length === 0) { %>
+            <tr>
+              <td colspan="9">No milestones recorded yet.</td>
+            </tr>
+          <% } else { %>
+            <% summaries.forEach(row => { %>
+              <tr>
+                <td><%= row.first_name %> <%= row.last_name %></td>
+                <td><%= row.email %></td>
+                <td><%= row.milestone_count || 0 %></td>
+                <td><%= row.first_milestone_date || '—' %></td>
+                <td><%= row.university_tours || 0 %></td>
+                <td><%= row.leadership_summits || 0 %></td>
+                <td><%= row.workshops_attended || 0 %></td>
+                <td><%= row.mariachi_practice || 0 %></td>
+                <td>
+                  <a href="/participants/<%= row.id %>/milestones">
+                    View
+                  </a>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+
+      <p>
+        <a href="/home">&larr; Back to Home</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
