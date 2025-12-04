@@ -14,50 +14,156 @@
   <%- include('../partials/_flash') %>
 
   <div class="page-wrap">
-    <div class="page">
-      <h1>Welcome to Ella Rises</h1>
+    <div class="page home-page">
 
-      <p>
-        Thank you for supporting Ella Rises. Use this home screen to jump quickly
-        to events, surveys, and (if you are a manager) admin tools.
-      </p>
-
-      <div class="card-grid">
-
-        <div class="card">
-          <div class="card-title">Explore Events</div>
-          <div class="card-value">Events</div>
-          <p>See upcoming and past workshops, mentoring sessions, and creative activities.</p>
-          <a href="/events" class="button-link button-secondary">View events</a>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Share Your Experience</div>
-          <div class="card-value">Surveys</div>
-          <p>Complete a post event survey to help Ella Rises improve future programs.</p>
-          <a href="/surveys/new" class="button-link button-secondary">Take a survey</a>
-        </div>
-
+      <!-- Hero -->
+      <section class="home-hero">
         <% if (currentUser && currentUser.role === 'manager') { %>
-          <div class="card">
-            <div class="card-title">Manage Participants</div>
-            <div class="card-value">Admin</div>
-            <p>View and manage participants and event registrations.</p>
-            <a href="/participants" class="button-link">Go to admin tools</a>
-          </div>
-
-          <div class="card">
-            <div class="card-title">Survey Results</div>
-            <div class="card-value">Insights</div>
-            <p>Review survey responses to understand impact and satisfaction.</p>
-            <a href="/surveys" class="button-link">View survey results</a>
-          </div>
+          <h1>Welcome back, Admin</h1>
+          <p class="home-subtitle">
+            Use this home screen to move quickly to events, surveys, and your key admin tools
+            while you support the Ella Rises mission.
+          </p>
+        <% } else { %>
+          <h1>Welcome to Ella Rises</h1>
+          <p class="home-subtitle">
+            Thank you for supporting Ella Rises. Use this home screen to move quickly to
+            events, surveys, and your donation history.
+          </p>
         <% } %>
-      </div>
+      </section>
+
+      <!-- Main actions for all users -->
+      <section class="home-grid">
+
+        <!-- Events card -->
+        <article class="home-card">
+          <div class="home-card-header">
+            <span class="home-card-icon">📅</span>
+            <div>
+              <p class="home-card-eyebrow">Explore Events</p>
+              <h2 class="home-card-title">Events</h2>
+            </div>
+          </div>
+          <p class="home-card-body">
+            See upcoming and past workshops, mentoring sessions, and creative activities.
+          </p>
+          <a href="/events" class="btn-primary home-card-btn">View events</a>
+        </article>
+
+        <!-- Surveys card -->
+        <article class="home-card">
+          <div class="home-card-header">
+            <span class="home-card-icon">📝</span>
+            <div>
+              <p class="home-card-eyebrow">Share Your Experience</p>
+              <h2 class="home-card-title">Surveys</h2>
+            </div>
+          </div>
+          <p class="home-card-body">
+            Complete a post event survey to help Ella Rises improve future programs.
+          </p>
+          <a href="/surveys/new" class="btn-primary home-card-btn">Take a survey</a>
+        </article>
+
+        <!-- Donations card -->
+        <article class="home-card">
+          <div class="home-card-header">
+            <span class="home-card-icon">❤️</span>
+            <div>
+              <p class="home-card-eyebrow">Your Support</p>
+              <h2 class="home-card-title">Donations</h2>
+            </div>
+          </div>
+          <p class="home-card-body">
+            Review your past donations and see how your support strengthens Ella Rises.
+          </p>
+          <a href="/my-donations" class="btn-primary home-card-btn">View donations</a>
+        </article>
+
+      </section>
+
+      <!-- Manager only admin tools -->
+      <% if (currentUser && currentUser.role === 'manager') { %>
+        <section class="home-grid admin-grid">
+
+          <article class="home-card">
+            <div class="home-card-header">
+              <span class="home-card-icon">👥</span>
+              <div>
+                <p class="home-card-eyebrow">Manage People</p>
+                <h2 class="home-card-title">Participants</h2>
+              </div>
+            </div>
+            <p class="home-card-body">
+              View and manage participants, contact details, and fields of interest.
+            </p>
+            <a href="/participants" class="btn-primary home-card-btn">Go to participants</a>
+          </article>
+
+          <article class="home-card">
+            <div class="home-card-header">
+              <span class="home-card-icon">📋</span>
+              <div>
+                <p class="home-card-eyebrow">Track Attendance</p>
+                <h2 class="home-card-title">Registrations</h2>
+              </div>
+            </div>
+            <p class="home-card-body">
+              Review event registrations and attendance for upcoming and past events.
+            </p>
+            <a href="/admin/registrations" class="btn-primary home-card-btn">View registrations</a>
+          </article>
+
+          <article class="home-card">
+            <div class="home-card-header">
+              <span class="home-card-icon">📊</span>
+              <div>
+                <p class="home-card-eyebrow">Survey Results</p>
+                <h2 class="home-card-title">Insights</h2>
+              </div>
+            </div>
+            <p class="home-card-body">
+              Review survey responses to understand satisfaction and long term impact.
+            </p>
+            <a href="/surveys" class="btn-primary home-card-btn">View survey results</a>
+          </article>
+
+          <article class="home-card">
+            <div class="home-card-header">
+              <span class="home-card-icon">💝</span>
+              <div>
+                <p class="home-card-eyebrow">Funding</p>
+                <h2 class="home-card-title">Donations</h2>
+              </div>
+            </div>
+            <p class="home-card-body">
+              Track donations and support for programs across Ella Rises events.
+            </p>
+            <a href="/donations" class="btn-primary home-card-btn">Manage donations</a>
+          </article>
+
+          <article class="home-card">
+            <div class="home-card-header">
+              <span class="home-card-icon">🔐</span>
+              <div>
+                <p class="home-card-eyebrow">Admin Team</p>
+                <h2 class="home-card-title">Manager Access</h2>
+              </div>
+            </div>
+            <p class="home-card-body">
+              Invite new managers or change existing managers back to regular users.
+            </p>
+            <a href="/manager-access" class="btn-primary home-card-btn">Manage access</a>
+          </article>
+
+        </section>
+      <% } %>
+
     </div>
   </div>
 
-    <!-- Ella Rises photo strip -->
+  <!-- Ella Rises photo strip -->
   <section class="hero-gallery">
     <div class="hero-gallery-row">
       <img src="/images/ellarises-1.jpg" alt="Ella Rises event 1">
@@ -67,7 +173,8 @@
       <img src="/images/ellarises-5.jpg" alt="Ella Rises event 5">
     </div>
   </section>
-  
+
 </body>
 </html>
+
 
