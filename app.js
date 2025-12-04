@@ -7,6 +7,7 @@ const flash = require('connect-flash');
 const helmet = require('helmet');
 const csrf = require('csurf');
 const path = require('path');
+
 const { injectUser } = require('./middleware/auth');
 
 // Route imports
@@ -16,7 +17,6 @@ const homeRoutes = require('./routes/home');
 const dashboardRoutes = require('./routes/dashboard');
 const participantRoutes = require('./routes/participants');
 const eventRoutes = require('./routes/events');
-// registrations removed on purpose
 const donationRoutes = require('./routes/donations');
 const adminRoutes = require('./routes/admin');
 const surveyRoutes = require('./routes/surveys');
@@ -24,46 +24,34 @@ const milestonesRoutes = require('./routes/milestones');
 
 const app = express();
 
-/* ============================================================
-   Security Headers
-============================================================ */
+// Security headers
 app.use(
   helmet({
     contentSecurityPolicy: {
       useDefaults: true,
       directives: {
         defaultSrc: ["'self'"],
-
-        // Allow Tableau scripts
         scriptSrc: [
           "'self'",
           "'unsafe-inline'",
           'https://public.tableau.com',
           'https://public.tableau.com/javascripts/api/'
         ],
-
-        // Allow Google Fonts plus inline styles
         styleSrc: [
           "'self'",
           "'unsafe-inline'",
           'https://fonts.googleapis.com'
         ],
-
-        // Allow Google Fonts host
         fontSrc: [
           "'self'",
           'https://fonts.gstatic.com',
           'data:'
         ],
-
-        // Allow Tableau images and embedded content
         imgSrc: [
           "'self'",
           'data:',
           'https://public.tableau.com'
         ],
-
-        // Allow Tableau iframe embeds
         frameSrc: [
           "'self'",
           'https://public.tableau.com'
@@ -73,19 +61,18 @@ app.use(
   })
 );
 
-/* ============================================================
-   Express Setup
-============================================================ */
+// View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Body parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// Static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-/* ============================================================
-   Session / Flash / CSRF
-============================================================ */
+// Session
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'dev-secret-key',
@@ -94,23 +81,24 @@ app.use(
   })
 );
 
+// Flash messages
 app.use(flash());
+
+// CSRF protection
 app.use(csrf());
 
-// Make CSRF token available in every EJS view
+// Make CSRF token available to all views
 app.use((req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
   next();
 });
 
-// Inject logged in user and flash into views
+// Inject logged in user and flash messages
 app.use(injectUser);
 
-/* ============================================================
-   ROUTES (ORDER MATTERS)
-============================================================ */
+/* ROUTES ORDER */
 
-// Public + authentication
+// Public and auth routes
 app.use('/', publicRoutes);
 app.use('/', authRoutes);
 
@@ -118,33 +106,30 @@ app.use('/', authRoutes);
 app.use('/', homeRoutes);
 app.use('/', dashboardRoutes);
 
-// Main CRUD sections
+// Main site routes
 app.use('/', participantRoutes);
 app.use('/', eventRoutes);
-app.use('/', registrationRoutes);
 app.use('/', donationRoutes);
 app.use('/', adminRoutes);
 app.use('/', milestonesRoutes);
 
-// Surveys mounted at /surveys
+// Surveys mounted under /surveys
 app.use('/surveys', surveyRoutes);
 
-// Milestones mounted at root, route file handles /milestones etc.
-app.use('/', milestonesRoutes);
-
-// IS 404 Requirement
+// IS 404 requirement
 app.get('/teapot', (req, res) => {
   res.status(418).send("I'm a teapot");
 });
 
-// 404 handler (must come after all normal routes)
+// 404 handler
 app.use((req, res) => {
-  res.status(404).render('public/landing', { title: 'Page Not Found', stats: { participants: 0, events: 0, donations: 0 } });
+  res.status(404).render('public/landing', {
+    title: 'Page Not Found',
+    stats: { participants: 0, events: 0, donations: 0 }
+  });
 });
 
-/* ============================================================
-   Error Handler
-============================================================ */
+// Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
 
@@ -155,12 +140,11 @@ app.use((err, req, res, next) => {
   res.status(500).send('Internal Server Error.');
 });
 
-/* ============================================================
-   Start Server
-============================================================ */
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Ella Rises app running at http://localhost:${PORT}`);
 });
+
 
 
