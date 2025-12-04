@@ -1,117 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Take Survey</title>
+  <title>Your Event Surveys</title>
   <link rel="stylesheet" href="/css/main.css">
-
   <style>
-    .survey-form-container {
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .survey-form label {
-      display: block;
+    .survey-history-table {
+      width: 100%;
+      border-collapse: collapse;
       margin-top: 1rem;
+    }
+    .survey-history-table th,
+    .survey-history-table td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    .survey-history-table th {
+      background-color: var(--er-charcoal);
+      color: var(--er-cream);
+    }
+    .status-pill {
+      display: inline-block;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
       font-weight: 600;
     }
-
-    .survey-form select,
-    .survey-form textarea,
-    .survey-form input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      margin-top: 6px;
+    .status-completed {
+      background: #d1fae5;
+      color: #065f46;
     }
-
-    .survey-form button {
-      margin-top: 1.5rem;
-      width: 100%;
-      padding: 14px;
-      font-size: 1.1rem;
+    .status-incomplete {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .btn-small {
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
     }
   </style>
 </head>
-
 <body>
 
 <%- include('../partials/_nav') %>
 <%- include('../partials/_flash') %>
 
 <div class="page-wrap">
-  <div class="page survey-form-container">
+  <div class="page">
+    <h1>Your Event Surveys</h1>
+    <p>View your past events and complete any missing surveys.</p>
 
-    <h1>Event Survey</h1>
-
-    <% if (events.length === 0) { %>
-      <p>No events available to review at this time.</p>
+    <% if (!surveyEvents || surveyEvents.length === 0) { %>
+      <p>You do not have any attended events yet.</p>
     <% } else { %>
 
-    <form method="POST" action="/surveys" class="survey-form">
-
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-
-      <!-- EVENT SELECT -->
-      <label for="eventname">Select Event</label>
-      <select name="eventname" required>
-        <option value="" disabled selected>Select an event...</option>
-        <% events.forEach(e => { %>
-          <option value="<%= e.eventname %>"
-                  data-datetime="<%= e.eventdatetimestart %>">
-            <%= e.eventname %> — <%= new Date(e.eventdatetimestart).toLocaleString() %>
-          </option>
-        <% }) %>
-      </select>
-
-      <!-- Hidden field auto-filled via JS -->
-      <input type="hidden" name="eventdatetimestart" id="eventDateHidden">
-
-      <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          const eventSelect = document.querySelector("select[name='eventname']");
-          const hiddenField = document.getElementById("eventDateHidden");
-
-          eventSelect.addEventListener("change", () => {
-            const selected = eventSelect.options[eventSelect.selectedIndex];
-            hiddenField.value = selected.getAttribute("data-datetime");
-          });
-        });
-      </script>
-
-      <!-- SCORES -->
-      <label>Satisfaction (1–5)</label>
-      <input type="number" name="surveysatisfactionscore" min="1" max="5" required>
-
-      <label>Usefulness (1–5)</label>
-      <input type="number" name="surveyusefulnessscore" min="1" max="5" required>
-
-      <label>Instructor Quality (1–5)</label>
-      <input type="number" name="surveyinstructorscore" min="1" max="5" required>
-
-      <label>Recommend (1–5)</label>
-      <input type="number" name="surveyrecommendationscore" min="1" max="5" required>
-
-      <label>Overall (1–10)</label>
-      <input type="number" name="surveyoverallscore" min="1" max="10" required>
-
-      <label>NPS Category</label>
-      <select name="surveynpsbucket" required>
-        <option value="" disabled selected>Select NPS</option>
-        <option value="Promoter">Promoter (9–10)</option>
-        <option value="Passive">Passive (7–8)</option>
-        <option value="Detractor">Detractor (0–6)</option>
-      </select>
-
-      <label>Additional Comments</label>
-      <textarea name="surveycomments" rows="4"></textarea>
-
-      <button class="btn-primary">Submit Survey</button>
-    </form>
+      <table class="survey-history-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Date &amp; Time</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% surveyEvents.forEach(ev => { %>
+            <tr>
+              <td><%= ev.eventname %></td>
+              <td><%= ev.eventDateDisplay %></td>
+              <td><%= ev.eventlocation || '' %></td>
+              <td>
+                <% if (ev.status === 'Completed') { %>
+                  <span class="status-pill status-completed">Completed</span>
+                <% } else { %>
+                  <span class="status-pill status-incomplete">Incomplete</span>
+                <% } %>
+              </td>
+              <td>
+                <a
+                  class="btn-primary btn-small"
+                  href="/surveys/fill?eventname=<%= encodeURIComponent(ev.eventname) %>&eventdatetimestart=<%= encodeURIComponent(ev.eventDateParam) %>"
+                >
+                  <%= ev.status === 'Completed' ? 'Edit Survey' : 'Take Survey' %>
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
 
     <% } %>
-
   </div>
 </div>
   <%- include('../partials/_footer') %>

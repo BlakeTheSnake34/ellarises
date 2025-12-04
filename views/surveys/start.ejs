@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Event Surveys</title>
+  <link rel="stylesheet" href="/css/main.css">
+
+  <style>
+    .survey-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+    }
+    .survey-table th, .survey-table td {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+    }
+    .status-complete {
+      color: green;
+      font-weight: bold;
+    }
+    .status-incomplete {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<%- include('../partials/_nav') %>
+<%- include('../partials/_flash') %>
+
+<div class="page-wrap">
+  <div class="page">
+
+    <h1>Your Event Surveys</h1>
+
+    <% if (events.length === 0) { %>
+      <p>You have no past events to review yet.</p>
+    <% } else { %>
+
+      <table class="survey-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Date</th>
+            <th>Survey Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% events.forEach(e => { 
+               const iso = new Date(e.eventdatetimestart).toISOString();
+          %>
+
+            <tr>
+              <td><%= e.eventname %></td>
+
+              <td><%= new Date(e.eventdatetimestart).toLocaleString() %></td>
+
+              <td>
+                <% if (e.surveysubmissiondate) { %>
+                  <span class="status-complete">Completed</span>
+                <% } else { %>
+                  <span class="status-incomplete">Incomplete</span>
+                <% } %>
+              </td>
+
+              <td>
+                <% if (!e.surveysubmissiondate) { %>
+                  <a class="btn-edit"
+                     href="/surveys/start/<%= encodeURIComponent(e.eventname) %>/<%= encodeURIComponent(iso) %>">
+                    Take Survey
+                  </a>
+                <% } else { %>
+                  <em>—</em>
+                <% } %>
+              </td>
+            </tr>
+
+          <% }) %>
+        </tbody>
+      </table>
+
+    <% } %>
+
+  </div>
+</div>
+
+</body>
+</html>

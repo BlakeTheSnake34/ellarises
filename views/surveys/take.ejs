@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Take Survey</title>
+  <link rel="stylesheet" href="/css/main.css">
+
+  <style>
+    .survey-card {
+      max-width: 600px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+
+    .survey-card h2 {
+      margin-top: 0;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 1rem;
+      display:block;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+<%- include('../partials/_nav') %>
+<%- include('../partials/_flash') %>
+
+<div class="survey-card">
+
+  <h2><%= event.eventname %> — Survey</h2>
+
+  <p><strong>Date:</strong> <%= new Date(event.eventdatetimestart).toLocaleString() %></p>
+
+  <form action="/surveys" method="POST">
+
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="eventname" value="<%= event.eventname %>">
+    <input type="hidden" name="eventdatetimestart" value="<%= event.eventdatetimestart %>">
+
+    <label>Satisfaction (1–5)</label>
+    <input type="number" name="surveysatisfactionscore" min="1" max="5" required>
+
+    <label>Usefulness (1–5)</label>
+    <input type="number" name="surveyusefulnessscore" min="1" max="5" required>
+
+    <label>Instructor Quality (1–5)</label>
+    <input type="number" name="surveyinstructorscore" min="1" max="5" required>
+
+    <label>Recommend (1–5)</label>
+    <input type="number" name="surveyrecommendationscore" min="1" max="5" required>
+
+    <label>Overall Score (1–10)</label>
+    <input type="number" name="surveyoverallscore" min="1" max="10" required>
+
+    <label>NPS Category</label>
+    <select name="surveynpsbucket" required>
+      <option value="">Select...</option>
+      <option value="Promoter">Promoter (9–10)</option>
+      <option value="Passive">Passive (7–8)</option>
+      <option value="Detractor">Detractor (0–6)</option>
+    </select>
+
+    <label>Comments</label>
+    <textarea name="surveycomments" rows="4"></textarea>
+
+    <button class="btn-primary" style="margin-top: 1.5rem; width:100%;">Submit Survey</button>
+
+  </form>
+</div>
+
+</body>
+</html>
