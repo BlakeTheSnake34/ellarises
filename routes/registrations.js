@@ -3,44 +3,112 @@ const router = express.Router();
 const knex = require('../db/knex');
 const { requireAuth, requireManager } = require('../middleware/auth');
 
-//
-// USER: register for an event
-//
-router.post('/events/:id/register', requireAuth, async (req, res) => {
-  const eventId = req.params.id;
-  const participantId = req.body.participant_id; // or map from currentUser later
+/* ============================================================
+   USER — VIEW UPCOMING EVENTS
+============================================================ */
+router.get('/', requireAuth, async (req, res) => {
+  try {
+    const events = await knex('eventoccurrences')
+      .select(
+        'eventname',
+        'eventdatetimestart',
+        'eventdatetimeend',
+        'eventlocation',
+        'eventcapacity',
+        'eventregistrationdeadline'
+      )
+      .where('eventdatetimestart', '>', new Date())
+      .orderBy('eventdatetimestart', 'asc');
 
-  await knex('event_registrations').insert({
-    participant_id: participantId,
-    event_id: eventId
-  });
+    res.render('registrations/list', {
+      title: 'Upcoming Events',
+      events
+    });
 
-  req.flash('success', 'You are registered for this event!');
-  res.redirect('/events');
+  } catch (err) {
+    console.error("ERROR loading events:", err);
+    req.flash('error', 'Could not load events.');
+    res.redirect('/');
+  }
 });
 
-//
-// MANAGER: see who registered for which event
-//
-router.get('/admin/registrations', requireManager, async (req, res) => {
-  const rows = await knex('event_registrations as r')
-    .leftJoin('participants as p', 'r.participant_id', 'p.id')
-    .leftJoin('events as e', 'r.event_id', 'e.id')
-    .select(
-      'r.id',
-      'r.registered_at',
-      'p.first_name',
-      'p.last_name',
-      'p.email',
-      'e.name as event_name',
-      'e.event_date'
-    )
-    .orderBy('r.registered_at', 'desc');
+/* ============================================================
+   USER — REGISTER FOR AN EVENT
+============================================================ */
+router.post('/:eventname/:eventdatetimestart', requireAuth, async (req, res) => {
+  try {
+    const { eventname, eventdatetimestart } = req.params;
+    const participantemail = req.session.user.email;
 
-  res.render('registrations/admin-list', {
-    title: 'Event Registrations',
-    registrations: rows
-  });
+    // Prevent duplicate registration
+    const exists = await knex('registrations')
+      .where({
+        participantemail,
+        eventname,
+        eventdatetimestart
+      })
+      .first();
+
+    if (exists) {
+      req.flash('error', 'You are already registered for this event.');
+      return res.redirect('/registrations');
+    }
+
+    // Insert registration
+    await knex('registrations').insert({
+      participantemail,
+      eventname,
+      eventdatetimestart,
+      registrationstatus: 'Registered',
+      registrationattendedflag: false,
+      registrationcheckintime: null,
+      registrationcreatedat: new Date()
+    });
+
+    req.flash('success', 'Successfully registered!');
+    res.redirect('/registrations');
+
+  } catch (err) {
+    console.error("REGISTRATION ERROR:", err);
+
+    // Common foreign key mis-match error explanation
+    if (String(err).includes("violates foreign key constraint")) {
+      req.flash(
+        'error',
+        'Registration failed: This event does not exist or you used an invalid timestamp. Make sure the event was created correctly.'
+      );
+    } else {
+      req.flash('error', 'Could not register for this event.');
+    }
+
+    res.redirect('/registrations');
+  }
+});
+
+/* ============================================================
+   MANAGER — VIEW ALL REGISTRATIONS
+============================================================ */
+router.get('/manage', requireManager, async (req, res) => {
+  try {
+    const regs = await knex('registrations as r')
+      .leftJoin('participants as p', 'r.participantemail', 'p.participantemail')
+      .select(
+        'r.*',
+        'p.participantfirstname',
+        'p.participantlastname'
+      )
+      .orderBy('eventdatetimestart', 'asc');
+
+    res.render('registrations/manage', {
+      title: 'Manage Registrations',
+      regs
+    });
+
+  } catch (err) {
+    console.error("MANAGER REGISTRATION ERROR:", err);
+    req.flash('error', 'Could not load registrations.');
+    res.redirect('/');
+  }
 });
 
 module.exports = router;

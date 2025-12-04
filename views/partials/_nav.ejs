@@ -11,24 +11,34 @@
   <!-- MIDDLE: navigation links -->
   <div class="nav-middle">
     <% if (currentUser) { %>
-      <a href="/home">Home</a>
-      <a href="/events">Events</a>
-      <a href="/my-donations">My Donations</a>
 
-      <!-- Only NON-managers see Take Survey -->
+      <!-- SHARED LINKS -->
+      <a href="/home">Home</a>
+
+      <!-- USERS (Non-managers) -->
       <% if (currentUser.role !== 'manager') { %>
+        <a href="/registrations">Events</a>
+        <a href="/my-donations">My Donations</a>
         <a href="/surveys/new">Take Survey</a>
       <% } %>
 
+      <!-- MANAGERS -->
       <% if (currentUser.role === 'manager') { %>
-        <span class="nav-divider"></span>
-        <a href="/dashboard">Dashboard</a>
+        <a href="/events">Events</a>
         <a href="/participants">Participants</a>
-        <a href="/surveys">Survey Results</a>
-        <a href="/admin/registrations">Registrations</a>
         <a href="/donations">Donations</a>
+
+        <span class="nav-divider"></span>
+
+        <a href="/dashboard">Dashboard</a>
+        <a href="/surveys">Survey Results</a>
+
+        <!-- FIXED: Proper manager link to registrations -->
+        <a href="/registrations/manage">Registrations</a>
+
         <a href="/admin/make-manager">Manager Access</a>
       <% } %>
+
     <% } %>
   </div>
 

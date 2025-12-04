@@ -7,7 +7,6 @@ const flash = require('connect-flash');
 const helmet = require('helmet');
 const csrf = require('csurf');
 const path = require('path');
-
 const { injectUser } = require('./middleware/auth');
 
 // Route imports
@@ -20,13 +19,14 @@ const eventRoutes = require('./routes/events');
 const registrationRoutes = require('./routes/registrations');
 const donationRoutes = require('./routes/donations');
 const adminRoutes = require('./routes/admin');
-const surveyRoutes = require('./routes/surveys');   // Mounted later at /surveys
+const surveyRoutes = require('./routes/surveys');
 const milestonesRoutes = require('./routes/milestones');
 
 const app = express();
 
-// Security headers
-// Security headers
+/* ============================================================
+   Security Headers
+============================================================ */
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -73,19 +73,19 @@ app.use(
   })
 );
 
-
-// View engine setup
+/* ============================================================
+   Express Setup
+============================================================ */
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Body parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// Static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Session
+/* ============================================================
+   Session / Flash / CSRF
+============================================================ */
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'dev-secret-key',
@@ -94,26 +94,23 @@ app.use(
   })
 );
 
-// Flash messages
 app.use(flash());
-
-// CSRF protection
 app.use(csrf());
 
-// Make CSRF token available to all views
+// Make CSRF token available in every EJS view
 app.use((req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
   next();
 });
 
-// Inject logged-in user + flash
+// Inject logged-in user + flash messages
 app.use(injectUser);
 
-/* ===========================
-   ROUTES (ORDER MATTERS!)
-=========================== */
+/* ============================================================
+   ROUTES (ORDER MATTERS)
+============================================================ */
 
-// Public + auth routes
+// Public + authentication
 app.use('/', publicRoutes);
 app.use('/', authRoutes);
 
@@ -121,27 +118,39 @@ app.use('/', authRoutes);
 app.use('/', homeRoutes);
 app.use('/', dashboardRoutes);
 
-// Main site routes
+// Main CRUD sections
 app.use('/', participantRoutes);
 app.use('/', eventRoutes);
-app.use('/', registrationRoutes);
+
+// FIXED — MOUNT REGISTRATIONS CORRECTLY
+app.use('/registrations', registrationRoutes);
+
 app.use('/', donationRoutes);
 app.use('/', adminRoutes);
 
-// SURVEYS — must be mounted at /surveys
+// SURVEYS — mounted cleanly at /surveys
 app.use('/surveys', surveyRoutes);
 
-// IS 404 Requirement
+// Milestones
+app.use('/', milestonesRoutes);
+
+/* ============================================================
+   IS404 Requirement — Teapot
+============================================================ */
 app.get('/teapot', (req, res) => {
   res.status(418).send("I'm a teapot");
 });
 
-// 404 handler
+/* ============================================================
+   404 Handler
+============================================================ */
 app.use((req, res) => {
   res.status(404).render('public/landing', { title: 'Page Not Found' });
 });
 
-// Error handler
+/* ============================================================
+   Error Handler
+============================================================ */
 app.use((err, req, res, next) => {
   console.error(err.stack);
 
@@ -152,11 +161,9 @@ app.use((err, req, res, next) => {
   res.status(500).send('Internal Server Error.');
 });
 
-// Router for milestones
-app.use(milestonesRoutes);
-
-
-// Start server
+/* ============================================================
+   Start Server
+============================================================ */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Ella Rises app running at http://localhost:${PORT}`);

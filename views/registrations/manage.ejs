@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<!-- NAV + FLASH -->
+<%- include('../partials/_nav') %>
+<%- include('../partials/_flash') %>
+
+<div class="page-wrap">
+  <div class="page">
+
+    <h1>All Registrations</h1>
+
+    <% if (regs.length === 0) { %>
+      <p>No registrations found.</p>
+    <% } else { %>
+
+      <table class="er-table">
+        <thead>
+          <tr>
+            <th>Participant</th>
+            <th>Email</th>
+            <th>Event</th>
+            <th>Start</th>
+            <th>Status</th>
+            <th>Attended?</th>
+            <th>Check-In Time</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        <% regs.forEach(r => { %>
+          <tr>
+            <!-- First + Last -->
+            <td>
+              <%= r.participantfirstname %> 
+              <%= r.participantlastname %>
+            </td>
+
+            <td><%= r.participantemail %></td>
+            <td><%= r.eventname %></td>
+
+            <td><%= new Date(r.eventdatetimestart).toLocaleString() %></td>
+
+            <td><%= r.registrationstatus || 'Registered' %></td>
+
+            <td><%= r.registrationattendedflag ? 'Yes' : 'No' %></td>
+
+            <td>
+              <% if (r.registrationcheckintime) { %>
+                <%= new Date(r.registrationcheckintime).toLocaleString() %>
+              <% } else { %>
+                —
+              <% } %>
+            </td>
+
+            <td>
+              <% if (r.registrationcreatedat) { %>
+                <%= new Date(r.registrationcreatedat).toLocaleString() %>
+              <% } else { %>
+                —
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+        </tbody>
+      </table>
+
+    <% } %>
+
+  </div>
+</div>
+
+</body>
+</html>
