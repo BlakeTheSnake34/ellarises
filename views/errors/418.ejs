@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title><%= title || "418 – I'm a Teapot" %></title>
+
+  <link rel="stylesheet" href="/css/main.css?v=8">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
+
+  <div class="page-wrap">
+    <div class="page">
+
+      <h1>418 I am a teapot</h1>
+
+      <p class="home-subtitle" style="max-width: 620px;">
+        This server refuses to brew coffee because it is a teapot.
+        Try a different endpoint or use a real coffee machine instead.
+      </p>
+
+      <div style="margin-top: 1.8rem; display: flex; flex-direction: column; align-items: center; gap: 1.3rem;">
+
+        <div style="padding: 1.2rem 1.5rem; border-radius: 18px; background-color: var(--er-surface); box-shadow: 0 10px 24px rgba(0,0,0,0.04);">
+          <img
+            src="/images/teapot.png?v=2"
+            alt="Teapot"
+            style="max-width: 220px; height: auto; border-radius: 14px;"
+          >
+        </div>
+
+        <!-- FIXED: Correct link back to your landing page -->
+        <a href="/" class="btn-primary" style="text-align: center;">
+          Back to home
+        </a>
+
+        <p style="font-size: 0.85rem; color: #777d77; margin: 0.2rem 0 0;">
+          HTTP status 418 returned on purpose for the Ella Rises site
+        </p>
+
+      </div>
+
+    </div>
+  </div>
+
+  <%- include('../partials/_footer') %>
+</body>
+</html>
+
+

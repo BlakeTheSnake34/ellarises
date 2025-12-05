@@ -1,35 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="utf-8">
   <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css">
+
+  <link rel="stylesheet" href="/css/main.css?v=7">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
   <%- include('../partials/_nav') %>
   <%- include('../partials/_flash') %>
 
-  <h1><%= title %></h1>
+  <div class="page-wrap">
+    <div class="page">
 
-  <form action="<%= donation.donationid ? '/donations/' + donation.donationid : '/donations' %>" method="POST">
+      <h1><%= title %></h1>
 
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <form
+        action="<%= donation && donation.donationid ? '/donations/' + donation.donationid : '/donations' %>"
+        method="POST"
+        class="er-form"
+      >
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-    <label>Participant Email</label>
-    <input type="email" name="participant_email" required
-           value="<%= donation.participantemail || '' %>">
+        <div class="form-row">
+          <label for="participant_email">Participant Email</label>
+          <input
+            id="participant_email"
+            type="email"
+            name="participant_email"
+            required
+            value="<%= donation.participantemail || '' %>"
+          >
+        </div>
 
-    <label>Donation Date</label>
-    <input type="date" name="donation_date" required
-           value="<%= donation.donationdate ? donation.donationdate.toISOString().slice(0,10) : '' %>">
+        <div class="form-row">
+          <label for="donation_date">Donation Date</label>
+          <input
+            id="donation_date"
+            type="date"
+            name="donation_date"
+            required
+            value="<%= donation.donationdate ? donation.donationdate.toISOString().slice(0,10) : '' %>"
+          >
+        </div>
 
-    <label>Donation Amount ($)</label>
-    <input type="number" name="donation_amount" required step="0.01"
-           value="<%= donation.donationamount || '' %>">
+        <div class="form-row">
+          <label for="donation_amount">Donation Amount ($)</label>
+          <input
+            id="donation_amount"
+            type="number"
+            name="donation_amount"
+            step="0.01"
+            required
+            value="<%= donation.donationamount || '' %>"
+          >
+        </div>
 
-    <button type="submit" class="btn">Save Donation</button>
+        <button type="submit" class="btn-primary" style="margin-top: 1rem;">
+          <%= donation && donation.donationid ? "Update Donation" : "Save Donation" %>
+        </button>
+      </form>
 
-  </form>
+      <p style="margin-top: 1.2rem;">
+        <a href="/donations" class="link-back">&larr; Back to donations</a>
+      </p>
+
+    </div>
+  </div>
+
   <%- include('../partials/_footer') %>
 </body>
 </html>
+

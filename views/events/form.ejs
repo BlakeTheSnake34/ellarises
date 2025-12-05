@@ -1,55 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css">
+  <meta charset="utf-8">
+  <title><%= title || 'Event' %></title>
+
+  <!-- match other views -->
+  <link rel="stylesheet" href="/css/main.css?v=7">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<%- include('../partials/_nav') %>
-<%- include('../partials/_flash') %>
+  <%- include('../partials/_nav') %>
+  <%- include('../partials/_flash') %>
 
-<h1><%= title %></h1>
+  <div class="page-wrap">
+    <div class="page">
 
-<form action="<%= event.eventname ? '/events/' + event.eventname : '/events' %>" method="POST">
-  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <h1><%= title %></h1>
 
-  <label>Name</label><br>
-  <input
-    type="text"
-    name="eventname"
-    value="<%= event.eventname || '' %>"
-    required
-  ><br><br>
+      <p style="margin-top: 0; color: #555a55; max-width: 640px;">
+        Use this form to create or update an Ella Rises event, including type, recurrence pattern, capacity, and description.
+      </p>
 
-  <label>Type</label><br>
-  <input
-    type="text"
-    name="eventtype"
-    value="<%= event.eventtype || '' %>"
-  ><br><br>
+      <form
+        action="<%= event && event.eventname ? '/events/' + encodeURIComponent(event.eventname) : '/events' %>"
+        method="POST"
+        style="max-width: 520px;"
+      >
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-  <label>Recurrence Pattern</label><br>
-  <input
-    type="text"
-    name="eventrecurrencepattern"
-    value="<%= event.eventrecurrencepattern || '' %>"
-  ><br><br>
+        <div class="form-row">
+          <label for="eventname">Event name</label>
+          <input
+            id="eventname"
+            type="text"
+            name="eventname"
+            value="<%= event.eventname || '' %>"
+            required
+          >
+        </div>
 
-  <label>Default Capacity</label><br>
-  <input
-    type="number"
-    name="eventdefaultcapacity"
-    value="<%= event.eventdefaultcapacity || '' %>"
-  ><br><br>
+        <div class="form-row">
+          <label for="eventtype">Event type</label>
+          <input
+            id="eventtype"
+            type="text"
+            name="eventtype"
+            placeholder="Example: Workshop, Summit, Tour"
+            value="<%= event.eventtype || '' %>"
+          >
+        </div>
 
-  <label>Description</label><br>
-  <textarea name="eventdescription"><%= event.eventdescription || '' %></textarea><br><br>
+        <div class="form-row">
+          <label for="eventrecurrencepattern">Recurrence pattern</label>
+          <input
+            id="eventrecurrencepattern"
+            type="text"
+            name="eventrecurrencepattern"
+            placeholder="Example: One time, Monthly, Weekly"
+            value="<%= event.eventrecurrencepattern || '' %>"
+          >
+        </div>
 
-  <button type="submit">
-    <%= event.eventname ? "Update Event" : "Create Event" %>
-  </button>
-</form>
+        <div class="form-row">
+          <label for="eventdefaultcapacity">Default capacity</label>
+          <input
+            id="eventdefaultcapacity"
+            type="number"
+            name="eventdefaultcapacity"
+            min="0"
+            placeholder="Example: 25"
+            value="<%= event.eventdefaultcapacity || '' %>"
+          >
+        </div>
+
+        <div class="form-row">
+          <label for="eventdescription">Description</label>
+          <textarea
+            id="eventdescription"
+            name="eventdescription"
+            rows="4"
+            placeholder="Brief description of the event, audience, and goals"
+          ><%= event.eventdescription || '' %></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 1rem;">
+          <%= event && event.eventname ? 'Update Event' : 'Create Event' %>
+        </button>
+      </form>
+
+      <p style="margin-top: 1.2rem;">
+        <a href="/events" class="link-back">&larr; Back to events</a>
+      </p>
+
+    </div>
+  </div>
+
   <%- include('../partials/_footer') %>
 </body>
 </html>
+

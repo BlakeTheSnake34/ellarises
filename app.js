@@ -116,9 +116,11 @@ app.use('/', milestonesRoutes);
 // Surveys mounted under /surveys
 app.use('/surveys', surveyRoutes);
 
-// IS 404 requirement
+// IS 404 requirement: 418 teapot endpoint
 app.get('/teapot', (req, res) => {
-  res.status(418).send("I'm a teapot");
+  res.status(418).render('errors/418', {
+    title: "I'm a Teapot"
+  });
 });
 
 // 404 handler
@@ -145,6 +147,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Ella Rises app running at http://localhost:${PORT}`);
 });
+
 
 
 
