@@ -1,3 +1,4 @@
+// knexfile.js
 require('dotenv').config();
 
 const baseConfig = {
@@ -12,9 +13,9 @@ const baseConfig = {
 
 module.exports = {
 
-  // -------------------------------
-  // LOCAL DEVELOPMENT
-  // -------------------------------
+  // -----------------------------------
+  // LOCAL DEVELOPMENT ENVIRONMENT
+  // -----------------------------------
   development: {
     ...baseConfig,
     connection: {
@@ -26,22 +27,25 @@ module.exports = {
     }
   },
 
-  // -------------------------------
+  // -----------------------------------
   // RENDER PRODUCTION ENVIRONMENT
-  // -------------------------------
+  // -----------------------------------
   production: {
     ...baseConfig,
-    connection: process.env.DATABASE_URL + '?sslmode=require',
+    connection: {
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }   // 🔥 Fixes "self-signed certificate"
+    },
     pool: { min: 2, max: 10 },
     migrations: {
       tableName: 'knex_migrations'
     }
   },
 
-  // -------------------------------
-  // AWS RDS ENVIRONMENT
-  // (your teammate's configuration)
-  // -------------------------------
+  // -----------------------------------
+  // OPTIONAL AWS RDS ENVIRONMENT
+  // (your teammate can use NODE_ENV=aws)
+  // -----------------------------------
   aws: {
     ...baseConfig,
     connection: {
