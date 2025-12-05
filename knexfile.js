@@ -14,7 +14,7 @@ const baseConfig = {
 module.exports = {
 
   // -----------------------------------
-  // LOCAL DEVELOPMENT ENVIRONMENT
+  // LOCAL DEVELOPMENT
   // -----------------------------------
   development: {
     ...baseConfig,
@@ -28,34 +28,20 @@ module.exports = {
   },
 
   // -----------------------------------
-  // RENDER PRODUCTION ENVIRONMENT
+  // PRODUCTION (ELASTIC BEANSTALK + RDS)
   // -----------------------------------
   production: {
     ...baseConfig,
     connection: {
-      connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false }   // 🔥 Fixes "self-signed certificate"
+      host: process.env.DB_HOST,       // <-- RDS endpoint from EB env vars
+      port: process.env.DB_PORT || 5432,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      ssl: { rejectUnauthorized: false }  // required for AWS RDS
     },
     pool: { min: 2, max: 10 },
-    migrations: {
-      tableName: 'knex_migrations'
-    }
-  },
-
-  // -----------------------------------
-  // OPTIONAL AWS RDS ENVIRONMENT
-  // (your teammate can use NODE_ENV=aws)
-  // -----------------------------------
-  aws: {
-    ...baseConfig,
-    connection: {
-      host: process.env.RDS_HOSTNAME,
-      port: process.env.RDS_PORT || 5432,
-      user: process.env.RDS_USERNAME,
-      password: process.env.RDS_PASSWORD,
-      database: process.env.RDS_DB_NAME,
-      ssl: { rejectUnauthorized: false }
-    }
+    migrations: { tableName: 'knex_migrations' }
   }
 
 };
