@@ -11,6 +11,10 @@ const baseConfig = {
 };
 
 module.exports = {
+
+  // -------------------------------
+  // LOCAL DEVELOPMENT
+  // -------------------------------
   development: {
     ...baseConfig,
     connection: {
@@ -22,7 +26,23 @@ module.exports = {
     }
   },
 
+  // -------------------------------
+  // RENDER PRODUCTION ENVIRONMENT
+  // -------------------------------
   production: {
+    ...baseConfig,
+    connection: process.env.DATABASE_URL + '?sslmode=require',
+    pool: { min: 2, max: 10 },
+    migrations: {
+      tableName: 'knex_migrations'
+    }
+  },
+
+  // -------------------------------
+  // AWS RDS ENVIRONMENT
+  // (your teammate's configuration)
+  // -------------------------------
+  aws: {
     ...baseConfig,
     connection: {
       host: process.env.RDS_HOSTNAME,
@@ -33,6 +53,5 @@ module.exports = {
       ssl: { rejectUnauthorized: false }
     }
   }
+
 };
-
-
