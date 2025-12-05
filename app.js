@@ -24,7 +24,12 @@ const milestonesRoutes = require('./routes/milestones');
 
 const app = express();
 
-// Security headers
+// --- Render Health Check Endpoint (Required) ---
+app.get('/healthz', (req, res) => {
+  res.status(200).send('OK');
+});
+
+// --- Security Headers ---
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -61,18 +66,18 @@ app.use(
   })
 );
 
-// View engine setup
+// --- EJS View Engine ---
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Body parsing
+// --- Body Parsing ---
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Static folder
+// --- Static Public Folder ---
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Session
+// --- Session Middleware ---
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'dev-secret-key',
@@ -81,28 +86,33 @@ app.use(
   })
 );
 
-// Flash messages
+// --- Flash Messages ---
 app.use(flash());
 
-// CSRF protection
+// --- CSRF Protection ---
 app.use(csrf());
 
 // Make CSRF token available to all views
 app.use((req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
+
+  // Also expose flash messages
+  res.locals.success = req.flash('success');
+  res.locals.error = req.flash('error');
+
   next();
 });
 
-// Inject logged in user and flash messages
+// --- Inject logged-in user into all views ---
 app.use(injectUser);
 
-/* ROUTES ORDER */
+// --- ROUTES ---
 
-// Public and auth routes
+// Public & Auth
 app.use('/', publicRoutes);
 app.use('/', authRoutes);
 
-// Logged in pages
+// Logged-in pages
 app.use('/', homeRoutes);
 app.use('/', dashboardRoutes);
 
@@ -113,17 +123,17 @@ app.use('/', donationRoutes);
 app.use('/', adminRoutes);
 app.use('/', milestonesRoutes);
 
-// Surveys mounted under /surveys
+// Surveys under /surveys
 app.use('/surveys', surveyRoutes);
 
-// IS 404 requirement: 418 teapot endpoint
+// Fun Easter Egg: 418 Teapot endpoint
 app.get('/teapot', (req, res) => {
   res.status(418).render('errors/418', {
     title: "I'm a Teapot"
   });
 });
 
-// 404 handler
+// --- 404 Handler ---
 app.use((req, res) => {
   res.status(404).render('public/landing', {
     title: 'Page Not Found',
@@ -131,7 +141,7 @@ app.use((req, res) => {
   });
 });
 
-// Error handler
+// --- Error Handler ---
 app.use((err, req, res, next) => {
   console.error(err.stack);
 
@@ -142,12 +152,8 @@ app.use((err, req, res, next) => {
   res.status(500).send('Internal Server Error.');
 });
 
-// Start server
+// --- Start Server ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Ella Rises app running at http://localhost:${PORT}`);
+  console.log(`Ella Rises app running on port ${PORT}`);
 });
-
-
-
-
